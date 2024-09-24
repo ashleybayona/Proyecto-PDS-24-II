@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurante La Puntita</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Restaurante La Puntita</h1>
+    </header>
+    <main>
+        <section id="menu">
+            <h2>Menú</h2>
+            <div class="product">
+                <h3>el Africano</h3>
+                <p>Waffle bañado en chocolate negro con arto chorreo blanco y topping a elegir.</p>
+                <p>Precio: S/ 20.00</p>
+                <button onclick="addToCart('el Africano', 25)">Añadir al carrito</button>
+            </div>
+            <div class="product">
+                <h3>Sugar Daddy</h3>
+                <p>Waffle bañado en chocolate blanco, con spray en oro* con relleno de nutella.</p>
+                <p>Precio: S/ 23.00</p>
+                <button onclick="addToCart('Sugar Daddy', 30)">Añadir al carrito</button>
+            </div>
+            <div class="product">
+                <h3>el Europeo</h3>
+                <p>Waffle bañado en chocolate rosado con chorreo blanco a tu gusto, más un topping a elegir.</p>
+                <p>Precio: S/ 22.00</p>
+                <button onclick="addToCart('el Europeo', 20)">Añadir al carrito</button>
+            </div>
+        </section>
+        <section id="cart">
+            <h2>Carrito de Compras</h2>
+            <ul id="cart-items">
+                <!-- Items del carrito aparecerán aquí -->
+            </ul>
+            <p>Total: S/ <span id="total">0.00</span></p>
+            <button onclick="checkout()">Comprar</button>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
