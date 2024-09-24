@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurante La Buena Mesa</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Restaurante La Buena Mesa</h1>
+    </header>
+    <main>
+        <section id="menu">
+            <h2>Menú</h2>
+            <div class="product">
+                <h3>Pasta Alfredo</h3>
+                <p>Deliciosa pasta con salsa Alfredo y pollo.</p>
+                <p>Precio: S/ 25.00</p>
+                <button onclick="addToCart('Pasta Alfredo', 25)">Añadir al carrito</button>
+            </div>
+            <div class="product">
+                <h3>Pizza Margarita</h3>
+                <p>Clásica pizza Margarita con albahaca fresca.</p>
+                <p>Precio: S/ 30.00</p>
+                <button onclick="addToCart('Pizza Margarita', 30)">Añadir al carrito</button>
+            </div>
+            <div class="product">
+                <h3>Ensalada César</h3>
+                <p>Ensalada fresca con aderezo César y crutones.</p>
+                <p>Precio: S/ 20.00</p>
+                <button onclick="addToCart('Ensalada César', 20)">Añadir al carrito</button>
+            </div>
+        </section>
+        <section id="cart">
+            <h2>Carrito de Compras</h2>
+            <ul id="cart-items">
+                <!-- Items del carrito aparecerán aquí -->
+            </ul>
+            <p>Total: S/ <span id="total">0.00</span></p>
+            <button onclick="checkout()">Comprar</button>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
