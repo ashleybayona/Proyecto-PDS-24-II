@@ -1,14 +1,12 @@
-# database.py
 import pyodbc
 
 def get_db_connection():
     try:
         connection = pyodbc.connect(
             'DRIVER={ODBC Driver 17 for SQL Server};'
-            'SERVER=your_server_name;'
-            'DATABASE=your_database_name;'
-            'UID=your_username;'
-            'PWD=your_password'
+            'SERVER=ELESEL;'  # Nombre del servidor
+            'DATABASE=Proyecto1;'  # Nombre de la base de datos que creaste
+            'Trusted_Connection=yes;'  # Autenticación de Windows
         )
         return connection
     except pyodbc.Error as e:
