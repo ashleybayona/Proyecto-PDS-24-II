@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            width: 600px;
+            margin: 50px auto;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #f4f4f4;
+            padding: 20px;
+            border-right: 1px solid #ccc;
+        }
+        .sidebar img {
+            display: block;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px auto;
+            border-radius: 50%;
+        }
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            margin-bottom: 20px;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .content img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto 20px auto;
+        }
+        .content .edit-section {
+            margin-bottom: 20px;
+        }
+        .content .edit-section label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .content .edit-section input {
+            width: calc(100% - 60px);
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        .content .edit-section button {
+            padding: 5px 10px;
+            margin-left: 10px;
+        }
+        .content .save-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .content .save-button button {
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <img src="https://via.placeholder.com/80" alt="Perfil">
+            <ul>
+                <li><a href="#">Mi cuenta</a></li>
+                <li><a href="#">Seguridad</a></li>
+                <li><a href="#">Historial de compras</a></li>
+                <li><a href="#">Seguimiento del pedido</a></li>
+                <li><a href="#">Salir</a></li>
+            </ul>
+        </div>
+        <div class="content">
+            <img src="https://via.placeholder.com/100" alt="Foto de perfil">
+            <div class="edit-section">
+                <button>Quitar foto</button>
+                <button>Cambiar foto</button>
+            </div>
+            <div class="edit-section">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" placeholder="Tu nombre">
+                <button>Editar</button>
+            </div>
+            <div class="edit-section">
+                <label for="dni">DNI:</label>
+                <input type="text" id="dni" placeholder="Tu DNI">
+                <button>Editar</button>
+            </div>
+            <div class="edit-section">
+                <label for="email">Correo electrónico:</label>
+                <input type="email" id="email" placeholder="Tu correo">
+                <button>Editar</button>
+            </div>
+            <div class="edit-section">
+                <label for="telefono">Teléfono:</label>
+                <input type="tel" id="telefono" placeholder="Tu teléfono">
+                <button>Editar</button>
+            </div>
+            <div class="edit-section">
+                <label for="direccion">Dirección:</label>
+                <input type="text" id="direccion" placeholder="Tu dirección">
+                <button>Editar</button>
+            </div>
+            <div class="save-button">
+                <button>Guardar cambios</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
