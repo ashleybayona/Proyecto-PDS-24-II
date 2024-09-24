@@ -12,17 +12,6 @@ class Reserva(BaseModel):
     nombre: str
     fecha: str
 
-# Conexión a la base de datos
-def get_db_connection():
-    connection = pyodbc.connect(
-        'DRIVER={ODBC Driver 17 for SQL Server};'
-        'SERVER=your_server_name;'
-        'DATABASE=your_database_name;'
-        'UID=your_username;'
-        'PWD=your_password'
-    )
-    return connection
-
 # Endpoint para obtener todas las reservas
 @app.get("/reservas/")
 def read_reservas():
