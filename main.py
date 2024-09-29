@@ -1,55 +1,35 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from typing import List
 import pyodbc
+from conexion_sqlserver import * #importa el archivo de la conexión a la bd
 
 app = FastAPI()
 
+app.title = 'API La Puntita' #titulo para la documentación dentro de fastapi
+
 #http://127.0.0.1:8000
 
-# Modelo de datos para reservas
-class Reserva(BaseModel):
-    id: int
-    nombre: str
-    fecha: str
+class Producto(BaseModel):
+    IdProducto: int
+    IdTipoProducto: int
+    NombreProducto: str
+    Descripcion: str
+    PrecioUnitario: float
 
-# Endpoint para obtener todas las reservas
-@app.get("/reservas/")
-def read_reservas():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT id, nombre, fecha FROM reservas")
-    reservas = cursor.fetchall()
-    conn.close()
-    return reservas
+@app.get("/", tags=['Home'])
+def home():
+    return "wasaaaa"
 
-# Endpoint para crear una nueva reserva
-@app.post("/reservas/")
-def create_reserva(reserva: Reserva):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO reservas (id, nombre, fecha) VALUES (?, ?, ?)",
-                   (reserva.id, reserva.nombre, reserva.fecha))
-    conn.commit()
-    conn.close()
-    return {"message": "Reserva creada exitosamente"}
+@app.get("/productos/", tags=['Producto'])
+def get_productos(): #va a mostrar el diccionario con todos los productos dentro de la bd
+    conect = conexion()
+    cursor = conect.cursor()
+    cursor.execute('select IdProducto, IdTipoProducto, NombreProducto, Descripcion, PrecioUnitario from Producto')
+    productos = cursor.fetchall()
+    conect.close()
+    return [{'IdProducto': prod.IdProducto, 'IdTipoProducto': prod.IdTipoProducto,
+             'Nombre': prod.NombreProducto, 'Descripción': prod.Descripcion if prod.Descripcion else '-',
+             'Precio unitario': prod.PrecioUnitario} for prod in productos] #valores tienen que ser igual al nombre de la columna en la bd al parecer
+#    return productos # no sé pq no da con este <- AVERIGUAR
 
-# Endpoint para actualizar una reserva existente
-@app.put("/reservas/{reserva_id}")
-def update_reserva(reserva_id: int, reserva: Reserva):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE reservas SET nombre = ?, fecha = ? WHERE id = ?",
-                   (reserva.nombre, reserva.fecha, reserva_id))
-    conn.commit()
-    conn.close()
-    return {"message": "Reserva actualizada exitosamente"}
-
-# Endpoint para eliminar una reserva
-@app.delete("/reservas/{reserva_id}")
-def delete_reserva(reserva_id: int):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM reservas WHERE id = ?", (reserva_id,))
-    conn.commit()
-    conn.close()
-    return {"message": "Reserva eliminada exitosamente"}
