@@ -76,6 +76,36 @@ def create_usuario(data: Usuario):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+@app.put("/user/{id_user}", tags=['Usuario'], response_model=UpdateUser)
+def update_user(data_update: UpdateUser, userid: int):
+    try:
+        with conexion().cursor() as cursor:
+            if data_update.Contrasenia:
+                passw = generate_password_hash(data_update.Contrasenia, 'pbkdf2:sha256:30', 30)
+            else:
+                passw = data_update.Contrasenia #que quede null si no se cambia para que en la base de datos quede la anterior
+
+            consulta = '''exec UpdateUser @IdUsuario = ?, @Nombre = ?, @Apellido = ?, @Telefono = ?,
+            @Email = ?, @Direccion = ?, @Referencia = ?, @Contrasenia = ?'''
+            cursor.execute(consulta, (userid, data_update.Nombre, data_update.Apellido, data_update.Telefono,
+                                      data_update.Email, data_update.Direccion, data_update.Referencia, passw))
+            conexion().commit()
+            result = cursor.execute('select * from Usuario where IdUsuario = ?', userid).fetchone()
+            return result
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+@app.delete("/user/{id_user}", tags=['Usuario'])
+def delete_user(id_user: int):
+    try:
+        with conexion().cursor() as cursor:
+            cursor.execute('exec DeleteUsuario @IdUsuario = ?', id_user)
+        return {"message": "Usuario eliminado correctamente"}
+    
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 
 @app.post("/ventas", tags=['Venta']) #FUNCIONA CUANDO QUIERE Y NO SÉ PQ -> ARREGLAR
 def create_venta(iduser: int):

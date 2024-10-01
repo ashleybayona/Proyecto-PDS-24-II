@@ -1,7 +1,7 @@
 --PROCEDIMIENTOS ALMACENADOS -> está en la base de datos pero aki tmb por si acaso
 
 --CREAR VENTA
-create proc CrearVenta
+/*create proc CrearVenta
 @IdUsuario int
 as 
 begin
@@ -82,4 +82,36 @@ as
 begin
 	insert into Usuario(IdTipoUsuario, DNI, Nombre, Apellido, Telefono, Email, Direccion, Referencia, Contrasenia)
 	values(2, @DNI, @Nombre, @Apellido, @Telefono, @Email, @Direccion, @Referencia, @Contrasenia)--2 pq todo lo creado será cliente
+end
+
+--EDITAR USUARIO
+create proc UpdateUser
+@IdUsuario int,
+@Nombre varchar(40) = null,
+@Apellido varchar(40) = null,
+@Telefono varchar(40) = null,
+@Email varchar(40) = null,
+@Direccion text = null,
+@Referencia text = null,
+@Contrasenia text = null
+as
+begin
+	update Usuario
+	set
+		Nombre = coalesce(@Nombre, Nombre),
+		Apellido = coalesce(@Apellido, Apellido),
+		Telefono = coalesce(@Telefono, Telefono),
+		Email = coalesce(@Email, Email),
+		Direccion = coalesce(@Direccion, Direccion),
+		Referencia = coalesce(@Referencia, Referencia),
+		Contrasenia = coalesce(@Contrasenia, Contrasenia)
+	where IdUsuario = @IdUsuario
+end*/
+
+--DELETE USUARIO
+create proc DeleteUsuario
+@IdUsuario int
+as 
+begin
+	delete from Usuario where IdUsuario = @IdUsuario
 end

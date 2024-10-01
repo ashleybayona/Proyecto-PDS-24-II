@@ -11,3 +11,12 @@ class Usuario(BaseModel):
     Direccion: str
     Referencia: str | None = None
     Contrasenia: str
+
+class UpdateUser(BaseModel):
+    Nombre: str | None = None
+    Apellido: str | None = None
+    Telefono: str | None = None
+    Email: str | None = None
+    Direccion: str | None = None
+    Referencia: str | None = None
+    Contrasenia: str | None = None
