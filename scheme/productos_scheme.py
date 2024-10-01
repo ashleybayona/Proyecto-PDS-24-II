@@ -1,9 +1,8 @@
 from pydantic import BaseModel
-from typing import Optional
 
 class Producto(BaseModel):
-    IdProducto: int
+    IdProducto: int | None = None
     IdTipoProducto: int
     NombreProducto: str
-    Descripcion: Optional[str]
+    Descripcion: str | None = None
     PrecioUnitario: float

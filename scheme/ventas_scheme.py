@@ -1,15 +1,13 @@
 from pydantic import BaseModel
-from typing import List, Optional
 from datetime import datetime
 from .detalleventa_scheme import *
 
 class Venta(BaseModel):
-    IdVenta: int
+    IdVenta: int | None = None
     IdUsuario: int
-    ImporteVenta: Optional[float]  
-    ImporteIGV: Optional[float] 
-    ImporteTotal: Optional[float]  
-    Fecha: Optional[datetime] 
-    CodigoBoleta: Optional[str] 
-    Estado: Optional[int]  = 0
-    Detalles: List[DetalleVenta]
+    ImporteVenta: float | None = 0
+    ImporteIGV: float | None = 0
+    ImporteTotal: float | None = 0 
+    Fecha: datetime | None = None
+    CodigoBoleta: str | None = None
+    Estado: int | None = 0

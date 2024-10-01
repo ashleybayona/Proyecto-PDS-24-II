@@ -67,3 +67,19 @@ begin
 		ImporteTotal = @ImporteTotal
 	where IdVenta = @IdVenta
 end
+
+--CREAR USUARIO -> todos clientes
+create proc CrearUsuario
+@DNI varchar(10),
+@Nombre varchar (40),
+@Apellido varchar(40),
+@Telefono varchar(20),
+@Email varchar(40),
+@Direccion text,
+@Referencia text,
+@Contrasenia text
+as
+begin
+	insert into Usuario(IdTipoUsuario, DNI, Nombre, Apellido, Telefono, Email, Direccion, Referencia, Contrasenia)
+	values(2, @DNI, @Nombre, @Apellido, @Telefono, @Email, @Direccion, @Referencia, @Contrasenia)--2 pq todo lo creado será cliente
+end

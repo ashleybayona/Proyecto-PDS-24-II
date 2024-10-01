@@ -1,9 +1,9 @@
 from pydantic import BaseModel
 
 class DetalleVenta(BaseModel):
-    IdDetalleVenta: int
+    IdDetalleVenta: int | None = None
     IdVenta: int
     IdProducto: int
     Cantidad: int
-    PrecioUnitario: float
-    Precio: float 
+    PrecioUnitario: float | None = None
+    Precio: float | None = None
