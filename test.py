@@ -1,6 +1,6 @@
 import unittest
 from fastapi.testclient import TestClient
-from main import app  # Asegúrate de importar correctamente tu aplicación FastAPI desde el archivo donde está tu código.
+from mainsql import app  # Asegúrate de importar correctamente tu aplicación FastAPI desde el archivo donde está tu código.
 from unittest.mock import patch
 
 client = TestClient(app)

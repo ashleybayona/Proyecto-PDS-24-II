@@ -1,7 +1,7 @@
+from config.connect_mysql import *
 from fastapi import FastAPI, HTTPException
 from werkzeug.security import generate_password_hash, check_password_hash
 from scheme import *
-from conexion_sqlserver import * #importa el archivo de la conexión a la bd
 from typing import List
 
 app = FastAPI()
@@ -22,128 +22,117 @@ API para gestionar reservas, aplicando al proyecto: gestionar ventas (aún no la
 def home():
     return "wasaaaa"
 
+@app.get("/productos", tags=['Producto'], response_model=List[Producto]) #funciona
+def get_productos():
+    try:
+        with conexion.cursor(dictionary=True) as cursor:
+            cursor.execute('select * from producto')
+            productos = cursor.fetchall() 
+        return productos
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/productos", tags=['Producto'], response_model=List[Producto]) #SÍ FUNCIONA
-def get_productos(): #va a mostrar el diccionario con todos los productos dentro de la bd
-    with conexion().cursor() as cursor: #with cierra la conexion autom
-        cursor.execute('select * from Producto')
-        productos = cursor.fetchall()
-    return productos
-
-@app.get("/usuarios", tags=['Usuario'], response_model=List[Usuario]) #SÍ FUNCIONA
+@app.get("/usuarios", tags=['Usuario'],response_model=List[Usuario]) #funciona
 def get_usuarios():
-    try: 
-        with conexion().cursor() as cursor:
-            cursor.execute("select * from Usuario")
+    try:
+        with conexion.cursor(dictionary=True) as cursor:
+            cursor.execute("select * from usuario")
             usuarios = cursor.fetchall()
         return usuarios
-    
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.get("/ventas", tags=['Venta'], response_model=List[Venta]) #SÍ FUNCIONA GAAA
+@app.get("/ventas", tags=['Venta'], response_model=List[Venta]) #funciona
 def get_ventas():
-    try: 
-        with conexion().cursor() as cursor:
-            cursor.execute("select * from Venta")
+    try:
+        with conexion.cursor(dictionary=True) as cursor:
+            cursor.execute("select * from venta")
             ventas = cursor.fetchall()
-        return ventas #cambiar a que de una respuesta http si no encuentra nada!! <- por mejorar
-    
+        return ventas
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-'''
-@app.delete("/ventas", tags=['Venta'])#FALTA GAAAA
-def delete_venta():
-    with conexion().cursor() as cursor:
-        cursor.execute
-'''
-
-@app.post("/usuario", tags=['Usuario']) #SÍ FUNCIONA
+@app.post("/usuario", tags=['Usuario']) #funciona
 def create_usuario(data: Usuario):
     try:
-        with conexion().cursor() as cursor:
+        with conexion.cursor() as cursor:
             new_user = data.dict()
-            #para encriptar la contraseña y que no sea visible en la base de datos 
-            new_user["Contrasenia"] = generate_password_hash(data.Contrasenia, 'pbkdf2:sha256:30', 30)
-            
-            consulta = '''exec CrearUsuario @DNI = ?, @Nombre = ?, @Apellido = ?, @Telefono = ?,
-            @Email = ?, @Direccion = ?, @Referencia = ?, @Contrasenia = ?'''
-            cursor.execute(consulta, (new_user['DNI'], new_user['Nombre'], new_user['Apellido'], new_user['Telefono'],
-                                    new_user['Email'], new_user['Direccion'], new_user['Referencia'], new_user['Contrasenia']))
-        return {"message": "Usuario creado exitosamente", "Nombre": new_user['Nombre']}
-    
+            new_user["passw"] = generate_password_hash(data.passw, 'pbkdf2:sha256:30', 30)
+            print(data)
+            print(new_user)
+            cursor.callproc('crearusuario', [new_user['dni'], new_user['nombre'], new_user['apellido'], new_user['telefono'], 
+                                            new_user['email'], new_user['direccion'], new_user['referencia'], new_user['passw']])
+            conexion.commit()
+        return {"message": "Usuario creado exitosamente"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.put("/user/{id_user}", tags=['Usuario'], response_model=UpdateUser)
-def update_user(data_update: UpdateUser, userid: int):
+@app.put("/user/{id_user}", tags=['Usuario'], response_model=UpdateUser) #funciona
+def update_user(data_update: UpdateUser, id_user: int):
     try:
-        with conexion().cursor() as cursor:
-            if data_update.Contrasenia:
-                passw = generate_password_hash(data_update.Contrasenia, 'pbkdf2:sha256:30', 30)
+        with conexion.cursor(dictionary=True) as cursor:
+            if data_update.passw:
+                passw = generate_password_hash(data_update.passw, 'pbkdf2:sha256:30', 30)
             else:
-                passw = data_update.Contrasenia #que quede null si no se cambia para que en la base de datos quede la anterior
-
-            consulta = '''exec UpdateUser @IdUsuario = ?, @Nombre = ?, @Apellido = ?, @Telefono = ?,
-            @Email = ?, @Direccion = ?, @Referencia = ?, @Contrasenia = ?'''
-            cursor.execute(consulta, (userid, data_update.Nombre, data_update.Apellido, data_update.Telefono,
-                                      data_update.Email, data_update.Direccion, data_update.Referencia, passw))
-            conexion().commit()
-            result = cursor.execute('select * from Usuario where IdUsuario = ?', userid).fetchone()
+                passw = data_update.passw
+            cursor.callproc('updateusuario', [id_user, data_update.nombre, data_update.apellido, data_update.telefono,
+                                            data_update.email, data_update.direccion, data_update.referencia, passw])
+            conexion.commit()
+            cursor.execute('select * from usuario where idUsuario = %s', (id_user,)) #ya funciona ji
+            result = cursor.fetchone()
             return result
-
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-    
-@app.delete("/user/{id_user}", tags=['Usuario'])
+
+@app.delete("/user/{id_user}", tags=['Usuario']) #funciona
 def delete_user(id_user: int):
     try:
-        with conexion().cursor() as cursor:
-            cursor.execute('exec DeleteUsuario @IdUsuario = ?', id_user)
+        with conexion.cursor() as cursor:
+            cursor.callproc('eliminarusuario', [id_user])
+            conexion.commit()
         return {"message": "Usuario eliminado correctamente"}
-    
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-
-@app.post("/ventas", tags=['Venta']) #FUNCIONA CUANDO QUIERE Y NO SÉ PQ -> ARREGLAR
+@app.post("/ventas", tags=['Venta'])
 def create_venta(iduser: int):
-    try:    
-        with conexion().cursor() as cursor:
-            cursor.execute('exec CrearVenta @IdUsuario = ?', (iduser,))
-            result = cursor.fetchone()
-            print(result)
-            if result:
-                id_venta = result[0]
-            else: 
-                print("no hay id")
+    try:
+        with conexion.cursor(dictionary=True) as cursor:
+            print('aka')
+            cursor.callproc('crearventa', [iduser]) #ci funciona
+            print('aka2')
+            result = cursor.fetchone() #aka no funciona
+            print(result) #imprime none
+            print(result[0])
+            if result and result[0]:
+                id_venta = result[0]  # Extract the IdVenta from the result # idVenta '13'
+                print(result)
+                print(id_venta)
+            else:
+                # Handle the case where no IdVenta was returned
                 raise HTTPException(status_code=500, detail="No se devolvió un IdVenta")
-            conexion().commit()
+            #conexion.commit()
         return {"message": "Venta creada exitosamente", "IdVenta": id_venta}
-        
     except Exception as e:
+        # Catch and return any errors
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.post("/detalle-venta", tags=['DetalleVenta']) #SÍ FUNCIONA
+@app.post("/detalle-venta", tags=['DetalleVenta']) #funciona
 def add_detalle_venta(detventa: DetalleVenta):
     try:
-        with conexion().cursor() as cursor: 
-            cursor.execute('exec AgregarProductosDetalleVenta @IdVenta = ?, @IdProducto = ?, @Cantidad = ?', 
-                           (detventa.IdVenta, detventa.IdProducto, detventa.Cantidad))
-            conexion().commit()
+        with conexion.cursor() as cursor:
+            cursor.callproc('agregarproductodetalleventa', [detventa.idVenta, detventa.idProducto, detventa.cantidad])
+            conexion.commit()
         return {"message": "Producto agregado a detalle de venta exitosamente"}
-        
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.put("/venta/{id_venta}/actualizar-importes", tags=['Venta']) #CÓDIGO 200 SÍ FUNCIONA, FALTA VER EN LA TABLA DE LA BD
-def update_importes(id_venta: int):
+@app.put("/venta/{id_venta}/actualizar-importes", tags=['Venta']) #funciona
+def update_importes_venta(id_venta: int):
     try:
-        with conexion().cursor() as cursor:
-            cursor.execute("exec ActualizarImportesVenta @IdVenta = ?", (id_venta))
-            conexion().commit()
+        with conexion.cursor() as cursor:
+            cursor.callproc('actualizarimportesventa', [id_venta])
+            conexion.commit()
         return {"message": "Importes de la venta actualizados exitosamente"}
-    
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

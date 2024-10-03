@@ -1,22 +1,23 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class Usuario(BaseModel):
-    IdUsuario: int | None = None
-    IdTipoUsuario: int | None = None
-    DNI: str
-    Nombre: str
-    Apellido: str
-    Telefono: str
-    Email: str
-    Direccion: str
-    Referencia: str | None = None
-    Contrasenia: str
+    idUsuario: int | None = None
+    idTipoUsuario: int | None = None
+    dni: str
+    nombre: str
+    apellido: str
+    telefono: str
+    email: str
+    direccion: str
+    referencia: str | None = None
+    passw: str
 
 class UpdateUser(BaseModel):
-    Nombre: str | None = None
-    Apellido: str | None = None
-    Telefono: str | None = None
-    Email: str | None = None
-    Direccion: str | None = None
-    Referencia: str | None = None
-    Contrasenia: str | None = None
+    nombre: str | None = None
+    apellido: str | None = None
+    telefono: str | None = None
+    email: str | None = None
+    direccion: str | None = None
+    referencia: str | None = None
+    passw: str | None = None
