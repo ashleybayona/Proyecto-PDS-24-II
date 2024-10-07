@@ -94,27 +94,18 @@ def delete_user(id_user: int):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.post("/ventas", tags=['Venta'])
+@app.post("/ventas", tags=['Venta']) #funciona
 def create_venta(iduser: int):
     try:
-        with conexion.cursor(dictionary=True) as cursor:
+        with conexion.cursor() as cursor:
             print('aka')
-            cursor.callproc('crearventa', [iduser]) #ci funciona
+            cursor.callproc('crearventa', [iduser]) 
             print('aka2')
-            result = cursor.fetchone() #aka no funciona
-            print(result) #imprime none
-            print(result[0])
-            if result and result[0]:
-                id_venta = result[0]  # Extract the IdVenta from the result # idVenta '13'
-                print(result)
-                print(id_venta)
-            else:
-                # Handle the case where no IdVenta was returned
-                raise HTTPException(status_code=500, detail="No se devolvió un IdVenta")
-            #conexion.commit()
+            for resultado in cursor.stored_results():
+                id_venta = resultado.fetchone()[0] 
+            conexion.commit()
         return {"message": "Venta creada exitosamente", "IdVenta": id_venta}
     except Exception as e:
-        # Catch and return any errors
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.post("/detalle-venta", tags=['DetalleVenta']) #funciona
