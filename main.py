@@ -1,4 +1,4 @@
-from config.connect_mysql import *
+from config.connect_gcloud_sql import *
 from fastapi import FastAPI, HTTPException
 from werkzeug.security import generate_password_hash, check_password_hash
 from scheme import *
