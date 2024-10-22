@@ -694,7 +694,7 @@ else:
                 return NotImplemented
         return True
 
-    class Protocol(typing.Generic, metaclass=_ProtocolMeta):
+    class Protocol(typing.Generic[T], metaclass=_ProtocolMeta):
         __doc__ = typing.Protocol.__doc__
         __slots__ = ()
         _is_protocol = True

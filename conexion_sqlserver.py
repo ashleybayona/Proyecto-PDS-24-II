@@ -1,8 +1,8 @@
-import pyodbc
+import env.Lib.pyodbc
 
 def conexion():
     try:
-        connection = pyodbc.connect(
+        connection = env.Lib.pyodbc.connect(
             'DRIVER={SQL Server};SERVER=LAPTOPASHLEY; DATABASE=LaPuntita;Trusted_Connection=yes')
         print("Conexión exitosa")
         return connection
