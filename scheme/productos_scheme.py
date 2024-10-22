@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
 class Producto(BaseModel):
-    IdProducto: int | None = None
-    IdTipoProducto: int
-    NombreProducto: str
-    Descripcion: str | None = None
-    PrecioUnitario: float
+    idProducto: int | None = None
+    idTipoProducto: int
+    nombreProducto: str
+    descripcion: str | None = None
+    precioUnitario: float
