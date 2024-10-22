@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from env.Lib.fastapi import FastAPI, HTTPException
 from env.Lib.werkzeug.security import generate_password_hash, check_password_hash
 from scheme import *
 from conexion_sqlserver import * #importa el archivo de la conexión a la bd
