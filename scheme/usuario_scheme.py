@@ -1,4 +1,4 @@
-from env.Lib.pydantic import BaseModel
+from pydantic import BaseModel
 from typing import Optional
 
 class Usuario(BaseModel):

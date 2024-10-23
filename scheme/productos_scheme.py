@@ -1,4 +1,4 @@
-from env.Lib.pydantic import BaseModel
+from pydantic import BaseModel
 
 class Producto(BaseModel):
     idProducto: int | None = None

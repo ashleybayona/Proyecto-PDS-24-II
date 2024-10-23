@@ -132,6 +132,7 @@ ENV/
 env.bak/
 venv.bak/
 fastapi-env/
+envNELSON/
 
 # Spyder project settings
 .spyderproject

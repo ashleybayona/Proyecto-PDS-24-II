@@ -1,6 +1,6 @@
-from env.Lib.fastapi import FastAPI, HTTPException
-from env.Lib.werkzeug.security import generate_password_hash, check_password_hash
-from config.connect_gcloud_sql import *
+from fastapi import FastAPI, HTTPException
+from werkzeug.security import generate_password_hash, check_password_hash
+from config.connect_gcloud_mysql import *
 from scheme import *
 from typing import List
 

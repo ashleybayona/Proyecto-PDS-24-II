@@ -1,4 +1,4 @@
-from env.Lib.pydantic import BaseModel
+from pydantic import BaseModel
 from datetime import datetime
 from .detalleventa_scheme import *
 
