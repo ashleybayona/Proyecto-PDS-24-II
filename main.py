@@ -61,7 +61,7 @@ def create_usuario(data: Usuario):
             print(data)
             print(new_user)
             cursor.callproc('crearusuario', [new_user['dni'], new_user['nombre'], new_user['apellido'], new_user['telefono'], 
-                                            new_user['email'], new_user['direccion'], new_user['referencia'], new_user['passw']])
+                                            new_user['email'], new_user['direccion'], new_user['referencia'], new_user['passw'], new_user['correoVerificado']])
             conexion.commit()
         return {"message": "Usuario creado exitosamente"}
     except Exception as e:
@@ -75,8 +75,7 @@ def update_user(data_update: UpdateUser, id_user: int):
                 passw = generate_password_hash(data_update.passw, 'pbkdf2:sha256:30', 30)
             else:
                 passw = data_update.passw
-            cursor.callproc('updateusuario', [id_user, data_update.nombre, data_update.apellido, data_update.telefono,
-                                            data_update.email, data_update.direccion, data_update.referencia, passw])
+            cursor.callproc('updateusuario', [id_user, data_update.telefono, data_update.email, data_update.direccion, data_update.referencia, passw])
             conexion.commit()
             cursor.execute('select * from usuario where idUsuario = %s', (id_user,)) #ya funciona ji
             result = cursor.fetchone()

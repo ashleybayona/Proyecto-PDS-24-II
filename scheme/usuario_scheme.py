@@ -12,10 +12,9 @@ class Usuario(BaseModel):
     direccion: str
     referencia: str | None = None
     passw: str
+    correoVerificado: int | None = 0
 
 class UpdateUser(BaseModel):
-    nombre: str | None = None
-    apellido: str | None = None
     telefono: str | None = None
     email: str | None = None
     direccion: str | None = None
