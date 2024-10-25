@@ -1,22 +1,29 @@
-from pydantic import BaseModel
-from typing import Optional
+from pydantic import EmailStr, validator
+from scheme_base.base_usuario import *
 
-class Usuario(BaseModel):
+class Usuario(BaseUsuario):
     idUsuario: int | None = None
     idTipoUsuario: int | None = None
     dni: str
     nombre: str
     apellido: str
-    telefono: str
-    email: str
-    direccion: str
-    referencia: str | None = None
-    passw: str
     correoVerificado: int | None = 0
 
-class UpdateUser(BaseModel):
+class CreateUser(BaseUsuario):
+    dni: str
+    nombre: str
+    apellido: str
+
+    #validar dni
+    @validator('dni')
+    def validar_dni(cls, num):
+        if not (num.isdigit() and len(num) == 8):
+            raise ValueError('El DNI debe tener exactamente 8 dígitos')
+        return num
+
+class UpdateUser(BaseUsuario):
     telefono: str | None = None
-    email: str | None = None
+    email: EmailStr | None = None
     direccion: str | None = None
     referencia: str | None = None
     passw: str | None = None

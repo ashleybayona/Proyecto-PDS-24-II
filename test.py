@@ -7,7 +7,7 @@ client = TestClient(app)
 
 class TestAPI(unittest.TestCase):
 
-    @patch('conexion_sqlserver.conexion')  # Cambiado aquí
+    @patch('config.connect_gcloud_mysql.conexion')  # Cambiado aquí
     def test_get_productos(self, mock_conexion):
         # Configuramos el mock de la conexión y la ejecución del cursor
         mock_cursor = mock_conexion.return_value.cursor.return_value.__enter__.return_value
@@ -21,7 +21,7 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(len(response.json()), 2)
         self.assertEqual(response.json()[0]["Nombre"], "Producto 1")
 
-    @patch('conexion_sqlserver.conexion')  # Cambiado aquí
+    @patch('config.connect_gcloud_mysql.conexion')  # Cambiado aquí
     def test_get_usuarios(self, mock_conexion):
         # Configuramos el mock de la conexión y la ejecución del cursor
         mock_cursor = mock_conexion.return_value.cursor.return_value.__enter__.return_value
@@ -35,7 +35,7 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(len(response.json()), 2)
         self.assertEqual(response.json()[0]["Nombre"], "Juan")
 
-    @patch('conexion_sqlserver.conexion')  # Cambiado aquí
+    @patch('config.connect_gcloud_mysql.conexion')  # Cambiado aquí
     def test_get_ventas(self, mock_conexion):
         # Configuramos el mock de la conexión y la ejecución del cursor
         mock_cursor = mock_conexion.return_value.cursor.return_value.__enter__.return_value
@@ -49,7 +49,7 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(len(response.json()), 2)
         self.assertEqual(response.json()[0]["IdVenta"], 1)
 
-    @patch('conexion_sqlserver.conexion')  # Cambiado aquí
+    @patch('config.connect_gcloud_mysql.conexion')  # Cambiado aquí
     @patch('werkzeug.security.generate_password_hash')
     def test_create_usuario(self, mock_generate_password_hash, mock_conexion):
         # Configuramos el mock para la generación del hash de la contraseña
@@ -73,7 +73,7 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["Nombre"], "Carlos")
 
-    @patch('conexion_sqlserver.conexion')  # Cambiado aquí
+    @patch('config.connect_gcloud_mysql.conexion')  # Cambiado aquí
     def test_create_venta(self, mock_conexion):
         # Configuramos el mock de la conexión y la ejecución del cursor
         mock_cursor = mock_conexion.return_value.cursor.return_value.__enter__.return_value
@@ -83,7 +83,7 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["IdVenta"], 1)
 
-    @patch('conexion_sqlserver.conexion')  # Cambiado aquí
+    @patch('config.connect_gcloud_mysql.conexion')  # Cambiado aquí
     def test_add_detalle_venta(self, mock_conexion):
         # Configuramos el mock de la conexión y la ejecución del cursor
         mock_cursor = mock_conexion.return_value.cursor.return_value.__enter__.return_value
@@ -99,7 +99,7 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["message"], "Producto agregado a detalle de venta exitosamente")
 
-    @patch('conexion_sqlserver.conexion')  # Cambiado aquí
+    @patch('config.connect_gcloud_mysql.conexion')  # Cambiado aquí
     def test_update_importes(self, mock_conexion):
         # Configuramos el mock de la conexión y la ejecución del cursor
         mock_cursor = mock_conexion.return_value.cursor.return_value.__enter__.return_value

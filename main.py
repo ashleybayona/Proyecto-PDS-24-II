@@ -22,6 +22,7 @@ API para gestionar reservas, aplicando al proyecto: gestionar ventas (aún no la
 def home():
     return "wasaaaa"
 
+#PARA VER TODOS LOS PRODUCTOS
 @app.get("/productos", tags=['Producto'], response_model=List[Producto]) #funciona
 def get_productos():
     try:
@@ -32,6 +33,7 @@ def get_productos():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+#PARA VER TODOS LOS USUARIOS
 @app.get("/usuarios", tags=['Usuario'],response_model=List[Usuario]) #funciona
 def get_usuarios():
     try:
@@ -42,6 +44,7 @@ def get_usuarios():
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+#PARA VER TODAS LAS VENTAS
 @app.get("/ventas", tags=['Venta'], response_model=List[Venta]) #funciona
 def get_ventas():
     try:
@@ -52,8 +55,9 @@ def get_ventas():
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+#PARA CREAR USUARIO
 @app.post("/usuario", tags=['Usuario']) #funciona
-def create_usuario(data: Usuario):
+def create_usuario(data: CreateUser):
     try:
         with conexion.cursor() as cursor:
             new_user = data.dict()
@@ -61,12 +65,13 @@ def create_usuario(data: Usuario):
             print(data)
             print(new_user)
             cursor.callproc('crearusuario', [new_user['dni'], new_user['nombre'], new_user['apellido'], new_user['telefono'], 
-                                            new_user['email'], new_user['direccion'], new_user['referencia'], new_user['passw'], new_user['correoVerificado']])
+                                            new_user['email'], new_user['direccion'], new_user['referencia'], new_user['passw']])
             conexion.commit()
         return {"message": "Usuario creado exitosamente"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+#PARA ACTUALIZAR USUARIO
 @app.put("/user/{id_user}", tags=['Usuario'], response_model=UpdateUser) #funciona
 def update_user(data_update: UpdateUser, id_user: int):
     try:
@@ -83,6 +88,7 @@ def update_user(data_update: UpdateUser, id_user: int):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+#PARA ELIMINAR USUARIO
 @app.delete("/user/{id_user}", tags=['Usuario']) #funciona
 def delete_user(id_user: int):
     try:
@@ -93,6 +99,7 @@ def delete_user(id_user: int):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+#PARA CREAR VENTA
 @app.post("/ventas", tags=['Venta']) #funciona
 def create_venta(iduser: int):
     try:
@@ -107,6 +114,7 @@ def create_venta(iduser: int):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+#PARA AGREGAR PRODUCTOS AL DETALLE VENTA
 @app.post("/detalle-venta", tags=['DetalleVenta']) #funciona
 def add_detalle_venta(detventa: DetalleVenta):
     try:
@@ -117,6 +125,7 @@ def add_detalle_venta(detventa: DetalleVenta):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+#PARA ACTUALIZAR LOS IMPORTES EN LA TABLA VENTA
 @app.put("/venta/{id_venta}/actualizar-importes", tags=['Venta']) #funciona
 def update_importes_venta(id_venta: int):
     try:
