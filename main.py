@@ -9,10 +9,6 @@ app = FastAPI()
 
 app.title = 'API La Puntita' #titulo para la documentación dentro de fastapi
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))  # Usa 8000 como puerto por defecto si no se encuentra la variable
-    uvicorn.run(app, host="0.0.0.0", port=port)
-
 '''
 http://127.0.0.1:8000
 API para gestionar reservas, aplicando al proyecto: gestionar ventas (aún no las entregas) -> agregar, editar y eliminar
@@ -140,3 +136,7 @@ def update_importes_venta(id_venta: int):
         return {"message": "Importes de la venta actualizados exitosamente"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))  # Usa 8000 como puerto por defecto si no se encuentra la variable
+    uvicorn.run(app, host="0.0.0.0", port=port)
