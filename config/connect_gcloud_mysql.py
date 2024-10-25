@@ -10,7 +10,8 @@ conexion = mysql.connector.connect(
     user=DB_USER,
     password=DB_PASSWORD,
     host=DB_HOST,
-    database=DB_NAME
+    database=DB_NAME,
+    use_pure=True
 )
 
 '''conexion = mysql.connector.connect(
