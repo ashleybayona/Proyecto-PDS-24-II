@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from werkzeug.security import generate_password_hash, check_password_hash
 from config.connect_gcloud_mysql import *
 from scheme import *
@@ -7,6 +8,11 @@ import uvicorn
 import asyncio 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+)
 
 app.title = 'API La Puntita' 
 
