@@ -4,6 +4,7 @@ from config.connect_gcloud_mysql import *
 from scheme import *
 from typing import List
 import uvicorn
+import asyncio 
 
 app = FastAPI()
 
@@ -58,11 +59,11 @@ def get_ventas():
 
 #PARA CREAR USUARIO
 @app.post("/usuario", tags=['Usuario']) #funciona
-async def create_usuario(data: CreateUser):
+def create_usuario(data: CreateUser):
     try:
         with conexion.cursor() as cursor:
             new_user = data.dict()
-            valid_email = await validar_email(new_user['email']) #new_user['email']
+            valid_email = asyncio.run(validar_email(new_user['email']))#new_user['email']
             if valid_email:
                 new_user["passw"] = generate_password_hash(data.passw, 'pbkdf2:sha256:30', 30)
                 cursor.callproc('crearusuario', [new_user['dni'], new_user['nombre'], new_user['apellido'], new_user['telefono'], 

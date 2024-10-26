@@ -47,7 +47,7 @@ async def validar_email(mail):
     url = "https://api.hunter.io/v2/email-verifier"
     params = {
         'email': mail,
-        'key': API_MAIL_KEY
+        'api_key': API_MAIL_KEY
     }
     async with httpx.AsyncClient() as client:
         response = await client.get(url, params=params)

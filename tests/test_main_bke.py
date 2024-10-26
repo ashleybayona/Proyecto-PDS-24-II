@@ -30,7 +30,7 @@ def test_get_ventas():
     assert isinstance(response.json(), list)
 
 def test_create_usuario():
-    new_user = {
+    n_user = {
         "telefono": "976547982",
         "email": "ashley.bayonav@gmail.com",
         "direccion": "123 Main St",
@@ -40,7 +40,8 @@ def test_create_usuario():
         "nombre": "John",
         "apellido": "Doe"
     }
-    response = client.post("/usuario", json=new_user)
+    response = client.post("/usuario", json=n_user)
+    print(response)
     assert response.status_code == 200
     assert response.json() == {"message": "Usuario creado exitosamente"} #al crear le asignará el idusuario 6
 
