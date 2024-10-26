@@ -8,17 +8,7 @@ import asyncio
 
 app = FastAPI()
 
-app.title = 'API La Puntita' #titulo para la documentación dentro de fastapi
-
-'''
-http://127.0.0.1:8000
-API para gestionar reservas, aplicando al proyecto: gestionar ventas (aún no las entregas) -> agregar, editar y eliminar
-- GET: obtener info -> mostrar
-- POST: agregar info -> crear
-- PUT: reemplazar info -> actualizar
-- PATCH: actualizar info
-- DELETE: borrar info
-'''
+app.title = 'API La Puntita' 
 
 @app.get("/", tags=['Home'])
 def home():
@@ -76,7 +66,7 @@ def create_usuario(data: CreateUser):
         raise HTTPException(status_code=400, detail=str(e))
 
 #PARA ACTUALIZAR USUARIO
-@app.put("/user/{id_user}", tags=['Usuario'], response_model=UpdateUser) #funciona
+@app.put("/user/{id_user}", tags=['Usuario'], response_model=Usuario) #funciona
 def update_user(data_update: UpdateUser, id_user: int):
     try:
         with conexion.cursor(dictionary=True) as cursor:
