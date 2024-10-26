@@ -58,15 +58,17 @@ def get_ventas():
 
 #PARA CREAR USUARIO
 @app.post("/usuario", tags=['Usuario']) #funciona
-def create_usuario(data: CreateUser):
+async def create_usuario(data: CreateUser):
     try:
         with conexion.cursor() as cursor:
             new_user = data.dict()
-            new_user["passw"] = generate_password_hash(data.passw, 'pbkdf2:sha256:30', 30)
-            print(data)
-            print(new_user)
-            cursor.callproc('crearusuario', [new_user['dni'], new_user['nombre'], new_user['apellido'], new_user['telefono'], 
-                                            new_user['email'], new_user['direccion'], new_user['referencia'], new_user['passw']])
+            valid_email = await data.validar_email(new_user['email'])
+            if valid_email:
+                new_user["passw"] = generate_password_hash(data.passw, 'pbkdf2:sha256:30', 30)
+                cursor.callproc('crearusuario', [new_user['dni'], new_user['nombre'], new_user['apellido'], new_user['telefono'], 
+                                                new_user['email'], new_user['direccion'], new_user['referencia'], new_user['passw']])
+            else:
+                raise HTTPException(status_code=400, detail="El correo electrónico no es válido.")
             conexion.commit()
         return {"message": "Usuario creado exitosamente"}
     except Exception as e:
