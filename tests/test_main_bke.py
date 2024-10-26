@@ -31,14 +31,14 @@ def test_get_ventas():
 
 def test_create_usuario():
     new_user = {
-        "dni": "12345678",
-        "nombre": "John",
-        "apellido": "Doe",
-        "telefono": "123456789",
+        "telefono": "976547982",
         "email": "ashley.bayonav@gmail.com",
         "direccion": "123 Main St",
         "referencia": "Near Park",
-        "passw": "password123"
+        "passw": "password123",
+        "dni": "12345678",
+        "nombre": "John",
+        "apellido": "Doe"
     }
     response = client.post("/usuario", json=new_user)
     assert response.status_code == 200

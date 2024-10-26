@@ -42,20 +42,20 @@ class BaseUsuario(BaseModel):
             raise ValueError('La contraseña debe tener al menos 6 carácteres')
         return password
 
-    #validar email
-    async def validar_email(email):
-        url = "https://api.hunter.io/v2/email-verifier"
-        params = {
-            'email': email,
-            'key': API_MAIL_KEY
-        }
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url, params=params)
-            data = response.json()
+#validar email
+async def validar_email(mail):
+    url = "https://api.hunter.io/v2/email-verifier"
+    params = {
+        'email': mail,
+        'key': API_MAIL_KEY
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params)
+        data = response.json()
 
-            status = data['data']['status'] #tiene que ser webmail o valid
-            result = data['data']['result'] #tiene que ser deliverable 
+        status = data['data']['status'] #tiene que ser webmail o valid
+        result = data['data']['result'] #tiene que ser deliverable 
 
-            if status in ['valid', 'webmail'] and result == 'deliverable':
-                return True
-            return False
+        if status in ['valid', 'webmail'] and result == 'deliverable':
+            return True
+        return False

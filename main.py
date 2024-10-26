@@ -62,7 +62,7 @@ async def create_usuario(data: CreateUser):
     try:
         with conexion.cursor() as cursor:
             new_user = data.dict()
-            valid_email = await data.validar_email(new_user['email'])
+            valid_email = await validar_email(new_user['email']) #new_user['email']
             if valid_email:
                 new_user["passw"] = generate_password_hash(data.passw, 'pbkdf2:sha256:30', 30)
                 cursor.callproc('crearusuario', [new_user['dni'], new_user['nombre'], new_user['apellido'], new_user['telefono'], 
