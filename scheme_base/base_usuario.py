@@ -2,6 +2,11 @@
 from pydantic import BaseModel, EmailStr, validator
 import phonenumbers
 import httpx
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+API_MAIL_KEY = os.getenv('API_MAIL_KEY')
 
 class BaseUsuario(BaseModel):
     telefono: str
@@ -42,7 +47,7 @@ class BaseUsuario(BaseModel):
         url = "https://api.hunter.io/v2/email-verifier"
         params = {
             'email': email,
-            'key': '72d1d02210cf2619b5f5e8721b12fc8fdc802d08'
+            'key': API_MAIL_KEY
         }
         async with httpx.AsyncClient() as client:
             response = await client.get(url, params=params)
