@@ -31,6 +31,9 @@ def get_productos():
         return productos
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conexion.is_connected():
+            conexion.close()
 
 #PARA VER TODOS LOS USUARIOS
 @app.get("/usuarios", tags=['Usuario'],response_model=List[Usuario]) #funciona
@@ -42,6 +45,9 @@ def get_usuarios():
         return usuarios
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        if conexion.is_connected():
+            conexion.close()
 
 #PARA VER TODAS LAS VENTAS
 @app.get("/ventas", tags=['Venta'], response_model=List[Venta]) #funciona
@@ -53,6 +59,9 @@ def get_ventas():
         return ventas
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        if conexion.is_connected():
+            conexion.close()
 
 #PARA CREAR USUARIO
 @app.post("/usuario", tags=['Usuario']) #funciona
@@ -71,6 +80,9 @@ def create_usuario(data: CreateUser):
         return {"message": "Usuario creado exitosamente"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        if conexion.is_connected():
+            conexion.close()
 
 #PARA ACTUALIZAR USUARIO
 @app.put("/user/{id_user}", tags=['Usuario'], response_model=Usuario) #funciona
@@ -88,6 +100,9 @@ def update_user(data_update: UpdateUser, id_user: int):
             return result
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        if conexion.is_connected():
+            conexion.close()
 
 #PARA ELIMINAR USUARIO
 @app.delete("/user/{id_user}", tags=['Usuario']) #funciona
@@ -99,6 +114,9 @@ def delete_user(id_user: int):
         return {"message": "Usuario eliminado correctamente"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        if conexion.is_connected():
+            conexion.close()
 
 #PARA CREAR VENTA
 @app.post("/ventas", tags=['Venta']) #funciona
@@ -114,6 +132,9 @@ def create_venta(iduser: int):
         return {"message": "Venta creada exitosamente", "IdVenta": id_venta}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        if conexion.is_connected():
+            conexion.close()
 
 #PARA AGREGAR PRODUCTOS AL DETALLE VENTA
 @app.post("/detalle-venta", tags=['DetalleVenta']) #funciona
@@ -125,6 +146,9 @@ def add_detalle_venta(detventa: DetalleVenta):
         return {"message": "Producto agregado a detalle de venta exitosamente"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        if conexion.is_connected():
+            conexion.close()
 
 #PARA ACTUALIZAR LOS IMPORTES EN LA TABLA VENTA
 @app.put("/venta/{id_venta}/actualizar-importes", tags=['Venta']) #funciona
@@ -136,6 +160,9 @@ def update_importes_venta(id_venta: int):
         return {"message": "Importes de la venta actualizados exitosamente"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        if conexion.is_connected():
+            conexion.close()
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
