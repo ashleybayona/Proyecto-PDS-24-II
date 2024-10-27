@@ -13,7 +13,9 @@ conexion = mysql.connector.connect(
     password=DB_PASSWORD,
     host=DB_HOST,
     database=DB_NAME,
-    use_pure=True
+    use_pure=True,
+    pool_name='mypool',
+    pool_size=10
 )
 
 
