@@ -12,6 +12,11 @@ print(phonenumbers.is_valid_number(x)) #true or false
 from pydantic import EmailStr, BaseModel
 import httpx
 import asyncio 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+API_MAIL_KEY = os.getenv('API_MAIL_KEY')
 
 class user(BaseModel):
     email: EmailStr
@@ -33,7 +38,7 @@ async def validar_email(mail):
     url = "https://api.hunter.io/v2/email-verifier"
     params = {
         'email': mail,
-        'api_key': 'c6ff6c154ca5621cad1b02d3b644c46a2aa9f811'
+        'api_key': API_MAIL_KEY
     }
     print('antes de await')
     async with httpx.AsyncClient() as client:

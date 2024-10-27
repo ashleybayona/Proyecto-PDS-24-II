@@ -12,6 +12,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],
+    allow_methods=['*']
 )
 
 app.title = 'API La Puntita' 
@@ -137,5 +138,5 @@ def update_importes_venta(id_venta: int):
         raise HTTPException(status_code=400, detail=str(e))
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))  # Usa 8000 como puerto por defecto si no se encuentra la variable
+    port = int(os.environ.get("PORT", 8080))
     uvicorn.run(app, host="0.0.0.0", port=port)
