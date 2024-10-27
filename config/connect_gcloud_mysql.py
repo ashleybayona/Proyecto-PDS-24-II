@@ -8,7 +8,7 @@ DB_USER = os.getenv('DB_USER')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_NAME = os.getenv('DB_NAME')
 
-conexion = mysql.connector.connect(
+conexion_pool = mysql.connector.pooling.MySQLConnectionPool(
     user=DB_USER,
     password=DB_PASSWORD,
     host=DB_HOST,
@@ -19,7 +19,7 @@ conexion = mysql.connector.connect(
 )
 
 
-if conexion.is_connected():
+if conexion_pool.get_connection().is_connected():
     print("Conexión exitosa a la base de datos en Google Cloud SQL.")
 else:
     print("Error en la conexión.")
