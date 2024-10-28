@@ -173,6 +173,10 @@ def update_importes_venta(id_venta: int):
         if conexion.is_connected():
             conexion.close()
 
+#TOKEN PARA VERIFICAR CORREO
+
+#LOGIN DE USUARIOS
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     uvicorn.run(app, host="0.0.0.0", port=port)
