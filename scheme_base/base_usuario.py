@@ -2,6 +2,11 @@
 from pydantic import BaseModel, EmailStr, validator
 import phonenumbers
 import httpx
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+API_MAIL_KEY = os.getenv('API_MAIL_KEY')
 
 class BaseUsuario(BaseModel):
     telefono: str
@@ -37,20 +42,20 @@ class BaseUsuario(BaseModel):
             raise ValueError('La contraseña debe tener al menos 6 carácteres')
         return password
 
-    #validar email
-    async def validar_email(email):
-        url = "https://api.hunter.io/v2/email-verifier"
-        params = {
-            'email': email,
-            'key': '72d1d02210cf2619b5f5e8721b12fc8fdc802d08'
-        }
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url, params=params)
-            data = response.json()
+#validar email
+async def validar_email(mail):
+    url = "https://api.hunter.io/v2/email-verifier"
+    params = {
+        'email': mail,
+        'api_key': API_MAIL_KEY
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params)
+        data = response.json()
 
-            status = data['data']['status'] #tiene que ser webmail o valid
-            result = data['data']['result'] #tiene que ser deliverable 
+        status = data['data']['status'] #tiene que ser webmail o valid
+        result = data['data']['result'] #tiene que ser deliverable 
 
-            if status in ['valid', 'webmail'] and result == 'deliverable':
-                return True
-            return False
+        if status in ['valid', 'webmail'] and result == 'deliverable':
+            return True
+        return False
