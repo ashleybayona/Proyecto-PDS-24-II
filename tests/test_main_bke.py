@@ -1,10 +1,13 @@
 # test_main.py
 from fastapi.testclient import TestClient
+import sys
+import os
+
+# Adjust the path to import main.py
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from main import app
 
 client = TestClient(app)
-
-#falta ver como llevar lo de eliminar usuario si se eliminan tmb las filas en las tablas relacionadas(venta, detalleventa) con un trigger o hacer q 
 
 def test_home():
     response = client.get("/")
@@ -40,7 +43,7 @@ def test_create_usuario():
     response = client.post("/usuario", json=n_user)
     print(response)
     assert response.status_code == 200
-    assert response.json() == {"message": "Usuario creado exitosamente"} #al crear le asignará el idusuario 8
+    assert response.json() == {"message": "Usuario creado exitosamente"} #al crear le asignará el idusuario 6 esto en fecha 27/10 (pq borre la bd)
 
 def test_update_user():
     updated_user = {
@@ -50,19 +53,19 @@ def test_update_user():
         "referencia": "Near School",
         "passw": "newpassword123"
     }
-    response = client.put("/user/8", json=updated_user)
+    response = client.put("/user/6", json=updated_user)
     assert response.status_code == 200
     assert "idUsuario" in response.json()
 
 def test_create_venta():
-    response = client.post("/ventas", params={"iduser": 8})
+    response = client.post("/ventas", params={"iduser": 6})
     assert response.status_code == 200
-    assert "IdVenta" in response.json() #al crear le asigna idventa 53
+    assert "IdVenta" in response.json() #al crear le asigna idventa 29
 
 def test_add_detalle_venta():
     detalle_venta = {
-        "idVenta": 53,
-        "idProducto": 1,
+        "idVenta": 29,
+        "idProducto": 18,
         "cantidad": 2
     }
     response = client.post("/detalle-venta", json=detalle_venta)
@@ -70,11 +73,11 @@ def test_add_detalle_venta():
     assert response.json() == {"message": "Producto agregado a detalle de venta exitosamente"}
 
 def test_update_importes_venta():
-    response = client.put("/venta/53/actualizar-importes")
+    response = client.put("/venta/29/actualizar-importes")
     assert response.status_code == 200
     assert response.json() == {"message": "Importes de la venta actualizados exitosamente"}
 
 def test_delete_user():
-    response = client.delete("/user/8")
+    response = client.delete("/user/6")
     assert response.status_code == 200
     assert response.json() == {"message": "Usuario eliminado correctamente"}

@@ -115,7 +115,7 @@ def delete_user(id_user: int):
     try:
         conexion = conexion_pool.get_connection()
         with conexion.cursor() as cursor:
-            cursor.callproc('eliminarusuario', [id_user])
+            cursor.callproc('deleteusuario', [id_user])
             conexion.commit()
         return {"message": "Usuario eliminado correctamente"}
     except Exception as e:
