@@ -8,6 +8,7 @@ class Usuario(BaseUsuario):
     nombre: str
     apellido: str
     correoVerificado: int | None = 0
+    eliminado: int | None = 0
 
 class CreateUser(BaseUsuario):
     dni: str

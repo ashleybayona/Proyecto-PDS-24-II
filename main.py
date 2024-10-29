@@ -1,7 +1,9 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from werkzeug.security import generate_password_hash, check_password_hash
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from werkzeug.security import generate_password_hash, check_password_hash 
 from config.connect_gcloud_mysql import *
+from datetime import timedelta
 from scheme import *
 from typing import List
 import uvicorn
@@ -174,8 +176,44 @@ def update_importes_venta(id_venta: int):
             conexion.close()
 
 #TOKEN PARA VERIFICAR CORREO
+#...
+
+oauth2_scheme = OAuth2PasswordBearer("/token")
 
 #LOGIN DE USUARIOS
+@app.get("/users/me", tags=['Usuario']) #ESTE FALTA COMPLETAR
+def read_users(token: str = Depends(oauth2_scheme)):
+    return 'USER'
+
+@app.post("/token", tags=['Usuario']) #FALTA MEJORAR
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    try:
+        conexion = conexion_pool.get_connection()
+        with conexion.cursor(dictionary=True) as cursor:
+            cursor.execute('select * from usuario where email = %s and eliminado = 0', (form_data.username,))
+            user = cursor.fetchone()
+            if user:
+                check_passw = check_password_hash(user['passw'], form_data.password)
+                if check_passw:
+                    '''acces_token_expires = timedelta(minutes=30)
+                    acces_token_jwt = create_token()'''
+                    return {
+                        'message': 'Usuario logueado exitosamente',
+                        'user_id': user['idUsuario']
+                    }
+                    '''{ #aka falla
+                        "access_token": "gaaa",
+                        "token_type": "bearer"
+                    }'''
+                else:
+                    raise HTTPException(status_code=400, detail="Contraseña incorrecta")
+            else:
+                raise HTTPException(status_code=400, detail="Usuario no encontrado")           
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        if conexion.is_connected():
+            conexion.close()
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
