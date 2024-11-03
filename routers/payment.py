@@ -72,6 +72,6 @@ async def create_order_paypal(idventa: int):
             }
         )
         response = client.execute(request)
-        return JSONResponse(content={'id': response.result.id })
+        return {'id': response.result.id, 'total': total}, 
     except IOError:
         print(IOError)

@@ -20,8 +20,9 @@ conexion_pool = mysql.connector.pooling.MySQLConnectionPool(
     pool_size=10
 )
 
-
-if conexion_pool.get_connection().is_connected():
-    print("Conexión exitosa a la base de datos en Railway.")
-else:
-    print("Error en la conexión.")
+try:
+    conexion = conexion_pool.get_connection()
+    if conexion.is_connected():
+        print("Conexión exitosa a la base de datos en Railway.")
+except mysql.connector.Error as err:
+    print(f"Error: {err}")
