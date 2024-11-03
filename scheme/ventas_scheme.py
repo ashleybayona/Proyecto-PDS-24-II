@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
-from .detalleventa_scheme import *
+
+from scheme_base.base_venta import *
 
 class Venta(BaseModel):
     idVenta: int | None = None

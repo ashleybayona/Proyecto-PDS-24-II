@@ -5,7 +5,7 @@ from typing import List
 import asyncio 
 
 #ARCHIVOS
-from config.connect_gcloud_mysql import *
+from config.connect_mysql import *
 from scheme.usuario_scheme import *
 
 users_router = APIRouter()

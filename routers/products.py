@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException
 from typing import List
 
 #ARCHIVOS
-from config.connect_gcloud_mysql import *
+from config.connect_mysql import *
 from scheme.productos_scheme import *
 
 products_router = APIRouter()

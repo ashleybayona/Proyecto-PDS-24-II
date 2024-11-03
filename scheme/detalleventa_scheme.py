@@ -1,9 +1,7 @@
 from pydantic import BaseModel
+from scheme_base.base_detalleventa import *
 
-class DetalleVenta(BaseModel):
+class DetalleVenta(AddDetalleVenta):
     idDetalleVenta: int | None = None
-    idVenta: int
-    idProducto: int
-    cantidad: int
     precioUnitario: float | None = None
     precio: float | None = None

@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from werkzeug.security import check_password_hash 
 
 #ARCHIVOS
-from config.connect_gcloud_mysql import *
+from config.connect_mysql import *
 
 
 login_router = APIRouter()

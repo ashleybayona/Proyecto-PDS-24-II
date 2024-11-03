@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException
 from typing import List
 
 #ARCHIVOS
-from config.connect_gcloud_mysql import *
+from config.connect_mysql import *
 from scheme.ventas_scheme import *
 
 sales_router = APIRouter()
@@ -30,7 +30,7 @@ def create_venta(iduser: int):
         conexion = conexion_pool.get_connection()
         with conexion.cursor() as cursor:
             print('aka')
-            cursor.callproc('crearventa', [iduser]) 
+            cursor.callproc('crearventa', [iduser, 0]) 
             print('aka2')
             for resultado in cursor.stored_results():
                 id_venta = resultado.fetchone()[0] 
@@ -56,3 +56,4 @@ def update_importes_venta(id_venta: int):
     finally:
         if conexion.is_connected():
             conexion.close()
+
