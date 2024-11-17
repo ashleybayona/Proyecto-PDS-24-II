@@ -32,10 +32,10 @@ def create_usuario(data: CreateUser):
         conexion = conexion_pool.get_connection()
         with conexion.cursor() as cursor:
             new_user = data.dict()
-            valid_email = asyncio.run(validar_email(new_user['email']))#new_user['email']
+            valid_email = asyncio.run(validar_email(new_user['email']))
             if valid_email:
                 new_user["passw"] = generate_password_hash(data.passw, 'pbkdf2:sha256:30', 30)
-                cursor.callproc('crearusuario', [new_user['dni'], new_user['nombre'], new_user['apellido'], new_user['telefono'], 
+                cursor.callproc('crear_usuario', [new_user['dni'], new_user['nombre'], new_user['apellido'], new_user['telefono'], 
                                                 new_user['email'], new_user['direccion'], new_user['referencia'], new_user['passw']])
             else:
                 raise HTTPException(status_code=400, detail="El correo electrónico no es válido.")
@@ -52,16 +52,25 @@ def create_usuario(data: CreateUser):
 def update_user(data_update: UpdateUser, id_user: int):
     try:
         conexion = conexion_pool.get_connection()
+
         with conexion.cursor(dictionary=True) as cursor:
             if data_update.passw:
                 passw = generate_password_hash(data_update.passw, 'pbkdf2:sha256:30', 30)
             else:
                 passw = data_update.passw
-            cursor.callproc('updateusuario', [id_user, data_update.telefono, data_update.email, data_update.direccion, data_update.referencia, passw])
+            
+            cursor.callproc('update_usuario', [id_user, data_update.telefono, data_update.email, data_update.direccion, data_update.referencia, passw])
             conexion.commit()
             cursor.execute('select * from usuario where idUsuario = %s', (id_user,)) #ya funciona ji
             result = cursor.fetchone()
-            return result
+            
+            if result:
+                return {
+                    "status": "success",
+                    "message": "Usuario actualizado correctamente"
+                    }
+            else:
+                raise HTTPException(status_code=404, detail="Usuario no encontrado")
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     finally:
@@ -74,7 +83,7 @@ def delete_user(id_user: int):
     try:
         conexion = conexion_pool.get_connection()
         with conexion.cursor() as cursor:
-            cursor.callproc('deleteusuario', [id_user])
+            cursor.callproc('delete_usuario', [id_user])
             conexion.commit()
         return {"message": "Usuario eliminado correctamente"}
     except Exception as e:

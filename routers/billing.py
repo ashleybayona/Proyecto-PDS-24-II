@@ -4,17 +4,17 @@ from typing import List
 
 #ARCHIVOS
 from config.connect_mysql import *
-from scheme.ventas_scheme import *
+from scheme.facturacion_scheme import *
 
-sales_router = APIRouter()
+billing_router = APIRouter()
 
 #PARA VER TODAS LAS VENTAS
-@sales_router.get("/ventas", tags=['Venta'], response_model=List[Venta]) #funciona
+@billing_router.get("/facturacion", tags=['Facturacion'], response_model=List[Facturacion]) #funciona
 def get_ventas():
     try:
         conexion = conexion_pool.get_connection()
         with conexion.cursor(dictionary=True) as cursor:
-            cursor.execute("select * from venta")
+            cursor.execute("select * from facturacion")
             ventas = cursor.fetchall()
         return ventas
     except Exception as e:
@@ -23,8 +23,9 @@ def get_ventas():
         if conexion.is_connected():
             conexion.close()
 
-#PARA CREAR VENTA
-@sales_router.post("/ventas", tags=['Venta']) #funciona
+
+'''#YA NO SIRVE CREO PARA CREAR FACTURACION: SIGNIFICA QUE YA HA SIDO PAGADA
+@billing_router.post("/ventas", tags=['Venta']) #EDITAR
 def create_venta(iduser: int):
     try:
         conexion = conexion_pool.get_connection()
@@ -40,10 +41,11 @@ def create_venta(iduser: int):
         raise HTTPException(status_code=400, detail=str(e))
     finally:
         if conexion.is_connected():
-            conexion.close()
+            conexion.close()'''
 
-#PARA ACTUALIZAR LOS IMPORTES EN LA TABLA VENTA
-@sales_router.put("/venta/{id_venta}/actualizar-importes", tags=['Venta']) #funciona
+
+'''#YA NO SIRVE CREO PARA ACTUALIZAR LOS IMPORTES EN LA TABLA VENTA
+@billing_router.put("/venta/{id_venta}/actualizar-importes", tags=['Venta']) #funciona
 def update_importes_venta(id_venta: int):
     try:
         conexion = conexion_pool.get_connection()
@@ -55,5 +57,5 @@ def update_importes_venta(id_venta: int):
         raise HTTPException(status_code=400, detail=str(e))
     finally:
         if conexion.is_connected():
-            conexion.close()
+            conexion.close()'''
 

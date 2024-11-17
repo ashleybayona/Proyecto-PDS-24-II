@@ -1,21 +1,21 @@
 from pydantic import EmailStr, validator
 from scheme_base.base_usuario import *
 
-class Usuario(BaseUsuario):
-    idUsuario: int | None = None
-    idTipoUsuario: int | None = None
+class Usuario(BaseUsuario): #este solo se usa para mostrar los atributos
+    idUsuario: int 
+    tipoUsuario: str #enum
     dni: str
     nombre: str
     apellido: str
-    correoVerificado: int | None = 0
-    eliminado: int | None = 0
+    correoVerificado: str #enum
+    eliminado: str #enum
 
 class CreateUser(BaseUsuario):
     dni: str
     nombre: str
     apellido: str
 
-    #validar dni
+    #validar dni: que se ingresen números y la longitud sea de 8 (solo perú)
     @validator('dni')
     def validar_dni(cls, num):
         if not (num.isdigit() and len(num) == 8):

@@ -24,10 +24,10 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
     try:
         conexion = conexion_pool.get_connection()
         with conexion.cursor(dictionary=True) as cursor:
-            cursor.execute('select * from usuario where email = %s and eliminado = 0', (form_data.username,))
+            cursor.execute("select * from usuario where email = %s and eliminado = 'no elim'", (form_data.username,))
             user = cursor.fetchone()
             if user:
-                check_passw = check_password_hash(user['passw'], form_data.password)
+                check_passw = check_password_hash(user['passw'], form_data.password) #compara contraseñas
                 if check_passw:
                     '''acces_token_expires = timedelta(minutes=30)
                     acces_token_jwt = create_token()'''

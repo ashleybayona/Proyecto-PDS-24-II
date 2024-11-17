@@ -1,86 +1,96 @@
 #LIBRERÍAS 
-from fastapi import APIRouter, Request
+from stripe import stripe
+from stripe.error import SignatureVerificationError
+from stripe.webhook import Webhook
+from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
-from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
-from paypalcheckoutsdk.orders import OrdersCreateRequest
-from os import getenv
+import os 
 from dotenv import load_dotenv
 
 #ARCHIVOS
-from scheme_base.base_venta import *
+from scheme.facturacion_scheme import *
 
 payment_router = APIRouter()
 
 load_dotenv()
 
-#Acces Token for SandBox
-client_id = getenv('CLIENT_ID')
-client_secret = getenv('CLIENT_SECRET')
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+webhook_key = os.getenv("WEBHOOK_KEY")
 
-#Creating an environment
-environment = SandboxEnvironment(client_id=client_id, client_secret=client_secret)
-client = PayPalHttpClient(environment)
+'''FLUJO DE VENTA CON CARRITO DE COMPRA INCLUYENDO DELIVERY
+el frontend pasa en formato json el idusuer, idproduct y la cantidad de los productos, también el monto de delivery, en el backend se hace el cálculo de los precios y se envía a stripe para que genere el checkout session, el cual se envía al frontend para que redirija al usuario a la página de pago de stripe, una vez que el usuario paga, stripe envía una notificación al backend para que se actualice el estado de la orden, guardándose los datos recién en la base de datos y se envía un correo al usuario con la confirmación de la compra.
+'''
 
-#OBTENER EL ORDER ID DE PAYPAL
-'''@payment_router.post('/create-order/{idventa}')
-async def create_order_paypal(idventa: int, request: Request):
+'''#este solo solicita el pago, si se completa recién guarda la info en la base de datos
+@payment_router.post("/create-checkout-session")
+def create_checkout_session(data: dict): #idUsuario, productos(idProducto, cantidad), impDelivery
+    iduser = data["idUsuario"]
+    productos = data["productos"]
+    impdelivery = data["delivery"]
+
+    #precioTotalProductos, igv, productosCalculados
+    subtotal, igv, productosCalculados = calcularImportes(productos)
+    total = subtotal + igv + impdelivery
+
+    #se crea la sesión en stripe
+    stripe_session = 0'''
+
+
+#DE PRUEBA PARA VER Q RETORNA
+@payment_router.post("/prueba-checkout-session")
+def create_checkout_session(): 
+    line_items = [
+        {
+            "price_data": {
+                "currency": "PEN",
+                "product_data": {
+                    "name": "T-shirt",
+                },
+                "unit_amount": 2000,
+            },
+            "quantity": 1,
+        },
+    ]
+
     try:
-        data = await request.json() #items de la compra -> ESTO TMB SE PUEDE HACER CON PROCEDIMIENTO ALMACENADO
-        total = get_total(idventa)
-        value = f"{total:.2f}" 
-
-        request = OrdersCreateRequest()
-
-        request.prefer('return=representation')
-        request.request_body(
-            {
-                'intent': 'CAPTURE',
-                'purchase_units': [
-                    {
-                        'amount': {
-                            'currency_code': 'USD', #ESTO DEBE DE SER CAMBIADO A PEN, PERO NO SE PUEDE POR EL MOMENTO
-                            'value': value
-                        }
-                    }
-                ],
-                'items': data
-            }
+        #se crea la sesión en stripe
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=line_items,
+            mode="payment",
+            success_url="https://z2rvnq4d-5173.brs.devtunnels.ms/", #CAMBIAR
+            cancel_url="https://z2rvnq4d-5173.brs.devtunnels.ms/cancel", #CAMBIAR
         )
-        response = client.execute(request)
-        #FALTA AGREGAR Q EL ID SE GUARDE EN LA BD
-        return JSONResponse(content={id: response.result.id })
-    except IOError:
-        print(IOError)'''
-
-
-#PRUEBA DEL ENDPOINT SIN REQUEST DEL FRONT
-@payment_router.post('/create-order/{idventa}')
-def create_order_paypal(idventa: int):
-    try:
-        total = get_total(idventa)
-        value = f"{total:.2f}"  # Convierte total a string con dos decimales
-        request = OrdersCreateRequest()
-
-        request.prefer('return=representation')
-        print('antes d request body')
-        request.request_body(
-            {
-                'intent': 'CAPTURE',
-                'purchase_units': [
-                    {
-                        'amount': {
-                            'currency_code': 'USD',
-                            'value': value
-                        }
-                    }
-                ],
-                #'items': data
-            }
-        ) 
-        print(request)
-        response = client.execute(request)
-        print('despues de response')
-        return JSONResponse(content={'id': response.result.id })
+        print(session)
+        return {"url": session.url}
     except Exception as e:
-        print(e)
-        return JSONResponse(content={'error': 'Error al crear el pedido'})
+        raise HTTPException(status_code=400, detail=f"Error creando sesión de pago: {str(e)}")
+
+@payment_router.post("/stripe-webhook")
+async def stripe_webhook(request: Request):
+    payload = await request.body()
+    sig_header = request.headers.get("Stripe-Signature")
+
+    try:
+        # Verifica que el evento provenga de Stripe
+        event = Webhook.construct_event(payload, sig_header, webhook_key)
+        print(event)
+
+    except ValueError as e:
+        # Error en el payload
+        raise HTTPException(status_code=400, detail="Invalid payload")
+    except SignatureVerificationError as e:
+        # Error en la firma
+        raise HTTPException(status_code=400, detail="Invalid signature")
+
+    '''# Maneja el evento del pago
+    if event["type"] == "checkout.session.completed":
+        session = event["data"]["object"]
+
+        # Recupera datos del usuario desde metadata
+        idUsuario = session["metadata"]["idUsuario"]
+
+        # Guarda la información en la base de datos
+        await guardarCompra(idUsuario, session)'''
+
+    return {"status": "success"}

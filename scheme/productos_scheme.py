@@ -1,8 +1,13 @@
-from pydantic import BaseModel
+#ARCHIVOS
+from scheme_base.base_producto import *
 
-class Producto(BaseModel):
-    idProducto: int | None = None
+class Producto(UploadProducto):
+    idProducto: int 
     idTipoProducto: int
-    nombreProducto: str
-    descripcion: str | None = None
-    precioUnitario: float
+
+class CreateProducto(UploadProducto):
+    idTipoProducto: int
+
+'''
+para crear: idtipo, nombre, descripcion, preciounit, imagen
+para editar: nombre, descripcion, preciounit, imagen'''

@@ -8,18 +8,18 @@ import os
 from routers.users import users_router
 from routers.products import products_router
 from routers.payment import payment_router
-from routers.sales import sales_router
-from routers.sale_detail import sale_detail_router
+from routers.billing import billing_router
+from routers.billing_detail import billing_detail_router
 from routers.login import login_router
 
 app = FastAPI()
 
-app.include_router(users_router)
-app.include_router(products_router)
-app.include_router(payment_router)
-app.include_router(sales_router)
-app.include_router(sale_detail_router)
-app.include_router(login_router)
+app.include_router(users_router) #usuarios
+app.include_router(products_router) #productos
+app.include_router(payment_router) #pagos
+app.include_router(billing_router) #facturación
+app.include_router(billing_detail_router) #detalle de facturación
+app.include_router(login_router) #login
 
 app.add_middleware(
     CORSMiddleware,

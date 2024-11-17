@@ -23,6 +23,8 @@ def get_productos():
         if conexion.is_connected():
             conexion.close()
 
+
+#TOO ESTO ES PARTE DEL ADMINISTRADOR
 #AGREGAR PRODUCTO
 #EDITAR PRODUCTO
 #ELIMINAR PRODUCTO

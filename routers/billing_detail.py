@@ -3,13 +3,13 @@ from fastapi import APIRouter, HTTPException
 
 #ARCHIVOS
 from config.connect_mysql import *
-from scheme.detalleventa_scheme import *
+from scheme.det_facturacion_scheme import *
 
-sale_detail_router = APIRouter()
+billing_detail_router = APIRouter()
 
-#PARA AGREGAR PRODUCTOS AL DETALLE VENTA
-@sale_detail_router.post("/detalle-venta", tags=['DetalleVenta']) #funciona
-def add_detalle_venta(detventa: AddDetalleVenta):
+'''#YA NO SIRVE CREO PARA AGREGAR PRODUCTOS AL DETALLE VENTA
+@billing_detail_router.post("/detalle-venta", tags=['DetalleVenta']) #EDITAR 
+def add_detalle_venta(detventa: AddDetalleFacturacion):
     try:
         conexion = conexion_pool.get_connection()
         with conexion.cursor() as cursor:
@@ -20,4 +20,4 @@ def add_detalle_venta(detventa: AddDetalleVenta):
         raise HTTPException(status_code=400, detail=str(e))
     finally:
         if conexion.is_connected():
-            conexion.close()
+            conexion.close()'''
