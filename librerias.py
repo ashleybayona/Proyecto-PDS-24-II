@@ -1,7 +1,7 @@
 #ARCHIVO PARA PROBAR LIBRERIAS O ERRORES EN MENOS CODIGO (NO FUNDAMENTAL PARA EL PROYECTO)
-from config.connect_mysql import *
+#from config.connect_mysql import *
 
-def prueba_importes(productos):
+'''def prueba_importes(productos):
     try:
         conexion = conexion_pool.get_connection()
         with conexion.cursor(dictionary=True) as cursor:
@@ -42,8 +42,22 @@ def prueba_importes(productos):
             conexion.close()
 
 productos = [{"idProducto": 24, "cantidad": 2}, {"idProducto": 35, "cantidad": 3}]
-prueba_importes(productos)
+prueba_importes(productos)'''
 
+
+import json
+
+data = {
+    "idUsuario": 1,
+    "productos": [
+        {"idProducto": 16, "cantidad": 2},
+        {"idProducto": 23, "cantidad": 1}
+    ],
+    "delivery": 15.00
+}
+
+json_data = json.dumps(data)
+print(json_data)  # Muestra el JSON generado
 
 
 '''import phonenumbers
