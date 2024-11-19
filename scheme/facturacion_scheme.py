@@ -1,19 +1,17 @@
-from pydantic import BaseModel
+from typing import List
 from datetime import datetime
 
+#ARCHIVOS
+from scheme_base.base_facturacion import *
+from scheme.det_facturacion_scheme import *
 
-class Facturacion(BaseModel):
-    idFacturacion: int 
+class Facturacion(BaseFacturacion):
     idUsuario: int
-    importeVenta: float 
-    importeDelivery: float 
-    importeIGV: float 
-    importeTotal: float
-    fecha: datetime 
-    codigoBoleta: str 
-    tipoDocumento: str
     idStripe: str | None = 0
     estadoPago: str 
+
+class Compra(BaseFacturacion):
+    detalles: List[DetalleCompra]
 
 def calcularImportes(productos, cursor): #devuelve importeVenta, importeIGV / productos: {idProducto, cantidad}
     subtotal = 0.00

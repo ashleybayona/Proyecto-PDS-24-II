@@ -9,3 +9,8 @@ class DetalleFacturacion(BaseModel):
     cantidad: int
     precio: float 
 
+class DetalleCompra(BaseModel):
+    nombreProducto: str 
+    precioUnitVenta: float
+    cantidad: int
+    precio: float
