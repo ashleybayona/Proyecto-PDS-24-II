@@ -21,7 +21,7 @@ webhook_key = os.getenv("WEBHOOK_KEY")
 el frontend pasa en formato json el idusuer, idproduct y la cantidad de los productos, también el monto de delivery, en el backend se hace el cálculo de los precios y se envía a stripe para que genere el checkout session, el cual se envía al frontend para que redirija al usuario a la página de pago de stripe, una vez que el usuario paga, stripe envía una notificación al backend para que se actualice el estado de la orden, guardándose los datos recién en la base de datos y se envía un correo al usuario con la confirmación de la compra.
 '''
 
-'''#este solo solicita el pago, si se completa recién guarda la info en la base de datos
+#este solo solicita el pago, si se completa recién guarda la info en la base de datos
 @payment_router.post("/create-checkout-session")
 def create_checkout_session(data: dict): #idUsuario, productos(idProducto, cantidad), impDelivery
     iduser = data["idUsuario"]
@@ -43,6 +43,7 @@ def create_checkout_session(data: dict): #idUsuario, productos(idProducto, canti
         }
         for producto in productosCalculados
     ]
+    print(line_items)
 
     if impdelivery > 0:
         line_items.append({
@@ -66,10 +67,10 @@ def create_checkout_session(data: dict): #idUsuario, productos(idProducto, canti
         )
         return {"url": session.url}
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error creando sesión de pago: {str(e)}")'''
+        raise HTTPException(status_code=400, detail=f"Error creando sesión de pago: {str(e)}")
 
 
-#DE PRUEBA PARA VER Q RETORNA
+'''#DE PRUEBA PARA VER Q RETORNA
 @payment_router.post("/prueba-checkout-session")
 def create_checkout_session(): 
     line_items = [
@@ -107,7 +108,7 @@ def create_checkout_session():
         print(session)
         return {"url": session.url}
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error creando sesión de pago: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Error creando sesión de pago: {str(e)}")'''
 
 @payment_router.post("/stripe-webhook")
 async def stripe_webhook(request: Request):

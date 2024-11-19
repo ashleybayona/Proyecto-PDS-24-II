@@ -40,4 +40,6 @@ def calcularImportes(productos, cursor): #devuelve importeVenta, importeIGV / pr
     precioTotalProductos = subtotal / 1.18 
     igv = precioTotalProductos * 0.18
 
+    print(f"precio por producto: {precioTotalProductos}, igv: {igv}, lista: {productosCalculados}")
+
     return precioTotalProductos, igv, productosCalculados

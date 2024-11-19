@@ -23,6 +23,7 @@ def get_ventas():
         if conexion.is_connected():
             conexion.close()
 
+#PARA VER VENTAS POR USUARIO
 
 '''#YA NO SIRVE CREO PARA CREAR FACTURACION: SIGNIFICA QUE YA HA SIDO PAGADA
 @billing_router.post("/ventas", tags=['Venta']) #EDITAR

@@ -48,7 +48,7 @@ def create_usuario(data: CreateUser):
             conexion.close()
 
 #PARA ACTUALIZAR USUARIO
-@users_router.put("/user/{id_user}", tags=['Usuario'], response_model=Usuario) #funciona
+@users_router.put("/micuenta/editar-datos", tags=['Usuario'], response_model=Usuario) #funciona
 def update_user(data_update: UpdateUser, id_user: int):
     try:
         conexion = conexion_pool.get_connection()
@@ -78,7 +78,7 @@ def update_user(data_update: UpdateUser, id_user: int):
             conexion.close()
 
 #PARA ELIMINAR USUARIO
-@users_router.delete("/user/{id_user}", tags=['Usuario']) #funciona
+@users_router.delete("/delete-user/{id_user}", tags=['Usuario']) #funciona
 def delete_user(id_user: int):
     try:
         conexion = conexion_pool.get_connection()
@@ -86,6 +86,25 @@ def delete_user(id_user: int):
             cursor.callproc('delete_usuario', [id_user])
             conexion.commit()
         return {"message": "Usuario eliminado correctamente"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        if conexion.is_connected():
+            conexion.close()
+
+#VER DATOS DE UN USUARIO
+@users_router.get("/micuenta", tags=['Usuario']) 
+def info_user(id_user: int):
+    try:
+        conexion = conexion_pool.get_connection()
+        with conexion.cursor(dictionary=True) as cursor:
+            cursor.callproc('info_usuario', [id_user])
+            for result in cursor.stored_results():
+                user = result.fetchone()
+            if user:
+                return user
+            else:
+                raise HTTPException(status_code=404, detail="Usuario no encontrado")
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     finally:
