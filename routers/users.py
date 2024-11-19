@@ -48,23 +48,19 @@ def create_usuario(data: CreateUser):
             conexion.close()
 
 #PARA ACTUALIZAR USUARIO SIN CONTRASEÑA
-@users_router.put("/micuenta/editar-datos", tags=['Usuario'], response_model=Usuario) #funciona
+@users_router.put("/micuenta/editar-datos", tags=['Usuario']) #funciona
 def update_user(data_update: UpdateUser, id_user: int):
     try:
         conexion = conexion_pool.get_connection()
 
         with conexion.cursor(dictionary=True) as cursor:
-            if data_update.passw:
-                passw = generate_password_hash(data_update.passw, 'pbkdf2:sha256:30', 30)
-            else:
-                passw = data_update.passw
-            
-            cursor.callproc('update_usuario', [id_user, data_update.telefono, data_update.email, data_update.direccion, data_update.referencia, passw])
+            cursor.callproc('update_usuario', [id_user, data_update.telefono, data_update.email, data_update.direccion, data_update.referencia])
             conexion.commit()
+            '''
             cursor.execute('select * from usuario where idUsuario = %s', (id_user,)) #ya funciona ji
-            result = cursor.fetchone()
+            result = cursor.fetchone()'''
             
-            if result:
+            if cursor.rowcount > 0:
                 return {
                     "status": "success",
                     "message": "Usuario actualizado correctamente"
@@ -77,9 +73,32 @@ def update_user(data_update: UpdateUser, id_user: int):
         if conexion.is_connected():
             conexion.close()
 
-'''#EDITAR USER SOLO CONTRASEÑA
-@users_router.put("/micuenta/seguridad", tags=['Usuario'], response_model=Usuario) 
-def update_user(new_passw: str, id_user: int):'''
+#EDITAR USER SOLO CONTRASEÑA
+@users_router.put("/micuenta/seguridad", tags=['Usuario']) 
+def update_passw_user(new_passw: UpdatePassword, id_user: int): #funciona
+    try:
+        conexion = conexion_pool.get_connection()
+        with conexion.cursor(dictionary=True) as cursor:
+            if new_passw.passw:
+                passw = generate_password_hash(new_passw.passw, 'pbkdf2:sha256:30', 30)
+            else:
+                passw = new_passw.passw
+
+            cursor.callproc('update_passw_user', [id_user, passw])
+            conexion.commit()
+            
+            if cursor.rowcount > 0:
+                return {
+                    "status": "success",
+                    "message": "Contraseña actualizada correctamente"
+                }
+            else:
+                raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        if conexion.is_connected():
+            conexion.close()
 
 #PARA ELIMINAR USUARIO
 @users_router.delete("/delete-user/{id_user}", tags=['Usuario']) #funciona

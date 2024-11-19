@@ -13,7 +13,6 @@ class BaseUsuario(BaseModel):
     email: EmailStr
     direccion: str 
     referencia: str | None = None
-    passw: str 
 
     '''
     VALIDACIONES:
@@ -34,13 +33,6 @@ class BaseUsuario(BaseModel):
             except phonenumbers.NumberParseException:
                 raise ValueError('Número de teléfono no válido')
         return num
-
-    #validar contraseña
-    @validator('passw')
-    def validar_passw(cls, password):
-        if len(password) < 6:
-            raise ValueError('La contraseña debe tener al menos 6 carácteres')
-        return password
 
 #validar email
 async def validar_email(mail):
