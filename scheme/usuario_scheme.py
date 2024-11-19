@@ -22,9 +22,9 @@ class CreateUser(BaseUsuario):
             raise ValueError('El DNI debe tener exactamente 8 dígitos')
         return num
 
-class UpdateUser(BaseUsuario):
+class UpdateUser(BaseModel):
     telefono: str | None = None
     email: EmailStr | None = None
     direccion: str | None = None
     referencia: str | None = None
-    passw: str | None = None
+

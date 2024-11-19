@@ -47,7 +47,7 @@ def create_usuario(data: CreateUser):
         if conexion.is_connected():
             conexion.close()
 
-#PARA ACTUALIZAR USUARIO
+#PARA ACTUALIZAR USUARIO SIN CONTRASEÑA
 @users_router.put("/micuenta/editar-datos", tags=['Usuario'], response_model=Usuario) #funciona
 def update_user(data_update: UpdateUser, id_user: int):
     try:
@@ -77,6 +77,10 @@ def update_user(data_update: UpdateUser, id_user: int):
         if conexion.is_connected():
             conexion.close()
 
+'''#EDITAR USER SOLO CONTRASEÑA
+@users_router.put("/micuenta/seguridad", tags=['Usuario'], response_model=Usuario) 
+def update_user(new_passw: str, id_user: int):'''
+
 #PARA ELIMINAR USUARIO
 @users_router.delete("/delete-user/{id_user}", tags=['Usuario']) #funciona
 def delete_user(id_user: int):
@@ -93,7 +97,7 @@ def delete_user(id_user: int):
             conexion.close()
 
 #VER DATOS DE UN USUARIO
-@users_router.get("/micuenta", tags=['Usuario']) 
+@users_router.get("/micuenta", tags=['Usuario'])  #funciona
 def info_user(id_user: int):
     try:
         conexion = conexion_pool.get_connection()
