@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 from fastapi import HTTPException
+import json
 
 #ARCHIVOS
 from config.connect_mysql import *
@@ -46,22 +47,47 @@ def calcularImportes(productos, cursor): #devuelve importeVenta, importeIGV / pr
 #primero crea la fila en factura introduciento los datos y esto regresa el idFacturacion para poder agregar los productos a detalleFactura
 def guardarCompra(iduser, session):
     metadata = session["metadata"]
+
     try:
+        # ver si están todos los datos
+        required_keys = ["impVenta", "impDelivery", "impIGV", "impTotal", "productos", "tipoDocumento"]
+        for key in required_keys:
+            if key not in metadata:
+                raise ValueError(f"Falta el campo requerido en metadata: {key}")
+        
+        # volver al tipo de dato original
+        impVenta = float(metadata["impVenta"])
+        impDelivery = float(metadata["impDelivery"])
+        impIGV = float(metadata["impIGV"])
+        impTotal = float(metadata["impTotal"])
+        productos = json.loads(metadata["productos"])
+
         conexion = conexion_pool.get_connection()
+
         with conexion.cursor() as cursor:
             #crea fila en factura
-            cursor.callproc('insertar_facturacion', [iduser, metadata["impVenta"], metadata["impDelivery"], metadata["impIGV"], metadata["impTotal"], metadata["tipoDocumento"], session["id"]])
+            cursor.callproc('insertar_facturacion', [iduser, impVenta, impDelivery, impIGV, impTotal, metadata["tipoDocumento"], session["id"]])
 
+            # obtener el id para el detalle de factura
             for result in cursor.stored_results():
                 idFacturacion = result.fetchone()[0]
 
+            if not idFacturacion:
+                raise ValueError("No se pudo obtener el ID de la facturación.")
+
             #agrega productos a detalleFactura con el idFacturacion obtenido
-            guardarProducto(idFacturacion, metadata["productos"], cursor)
-            
+            guardarProducto(idFacturacion, productos, cursor)
+
             conexion.commit()
-            return cursor.fetchone()
+            return {
+                "status": "success", 
+                "idFacturacion": idFacturacion
+                }
+    except ValueError as e:
+        # Error específico de validación o lógica
+        raise HTTPException(status_code=422, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=f"Error al guardar la compra: {str(e)}")
     finally:
         if conexion.is_connected():
             conexion.close()

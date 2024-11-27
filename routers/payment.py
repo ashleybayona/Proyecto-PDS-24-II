@@ -4,6 +4,7 @@ from stripe.error import SignatureVerificationError
 from stripe.webhook import Webhook
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
+import json
 import os 
 from dotenv import load_dotenv
 
@@ -68,13 +69,13 @@ def create_checkout_session(data: dict): #idUsuario, productos(idProducto, canti
                     mode="payment",
                     success_url="https://z2rvnq4d-5173.brs.devtunnels.ms/", #CAMBIAR
                     cancel_url="https://z2rvnq4d-5173.brs.devtunnels.ms/cancel", #CAMBIAR
-                    metadata={
-                        "idUsuario": iduser,
-                        "productos": productos,
-                        "impVenta": subtotal,
-                        "impDelivery": impdelivery,
-                        "impIGV": igv,
-                        "impTotal": total,
+                    metadata={ # metadata solo acepta strings
+                        "idUsuario": str(iduser),
+                        "productos": json.dumps(productos),
+                        "impVenta": str(subtotal),
+                        "impDelivery": str(impdelivery),
+                        "impIGV": str(igv),
+                        "impTotal": str(total),
                         "tipoDocumento": tipoDocumento 
                     },
                 )
@@ -149,10 +150,10 @@ async def stripe_webhook(request: Request):
         session = event["data"]["object"]
 
         # Recupera datos del usuario desde metadata
-        idUsuario = session["metadata"]["idUsuario"]
+        idUsuario = int(session["metadata"]["idUsuario"])
 
         # Guarda la información en la base de datos
-        await guardarCompra(idUsuario, session)
+        await guardarCompra(idUsuario, session) # dentro se deserialized metadata y se guarda en la base de datos
 
     return {"status": "success"}
 
