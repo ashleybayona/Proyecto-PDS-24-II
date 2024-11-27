@@ -46,9 +46,12 @@ def calcularImportes(productos, cursor): #devuelve importeVenta, importeIGV / pr
 
 #primero crea la fila en factura introduciento los datos y esto regresa el idFacturacion para poder agregar los productos a detalleFactura
 def guardarCompra(iduser, session):
+    print("entra a guardarCompra")
     metadata = session["metadata"]
+    print("metadata", metadata)
     conexion = None
     try:
+        print("entra al try")
         # ver si están todos los datos
         required_keys = ["impVenta", "impDelivery", "impIGV", "impTotal", "productos", "tipoDocumento"]
         for key in required_keys:
@@ -65,6 +68,7 @@ def guardarCompra(iduser, session):
         conexion = conexion_pool.get_connection()
 
         with conexion.cursor() as cursor:
+            print("entre al cursor")
             #crea fila en factura
             cursor.callproc('insertar_facturacion', [iduser, impVenta, impDelivery, impIGV, impTotal, metadata["tipoDocumento"], session["id"]])
 
@@ -75,8 +79,11 @@ def guardarCompra(iduser, session):
             if not idFacturacion:
                 raise ValueError("No se pudo obtener el ID de la facturación.")
 
+            print("va a entrar a guardarProducto")
             #agrega productos a detalleFactura con el idFacturacion obtenido
             guardarProducto(idFacturacion, productos, cursor)
+
+            print("sale de guardarProducto")
 
             conexion.commit()
             return {
