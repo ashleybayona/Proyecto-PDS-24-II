@@ -65,7 +65,7 @@ def guardarCompra(iduser, session):
         print(impVenta)
         impDelivery = round(float(metadata["impDelivery"]), 2)
         print(impDelivery)
-        impIGV = round(float(metadata["impIGV"])), 2        
+        impIGV = round(float(metadata["impIGV"]), 2)      
         print(impIGV)
         impTotal = round(float(metadata["impTotal"]), 2)
         print(impTotal)
