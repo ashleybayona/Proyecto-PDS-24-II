@@ -1,5 +1,8 @@
 from pydantic import BaseModel
 
+#ARCHIVOS
+from scheme_base.base_det_facturacion import *
+
 class DetalleFacturacion(BaseModel):
     idDetFacturacion: int 
     idFacturacion: int

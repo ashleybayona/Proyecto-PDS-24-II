@@ -1,5 +1,10 @@
 from pydantic import BaseModel
 from datetime import datetime
+from fastapi import HTTPException
+
+#ARCHIVOS
+from config.connect_mysql import *
+from scheme.det_facturacion_scheme import *
 
 class BaseFacturacion(BaseModel):
     idFacturacion: int
@@ -11,3 +16,52 @@ class BaseFacturacion(BaseModel):
     codigoBoleta: str
     tipoDocumento: str
 
+def calcularImportes(productos, cursor): #devuelve importeVenta, importeIGV / productos: {idProducto, cantidad}
+    subtotal = 0.00
+    productosCalculados = []
+
+    for producto in productos:
+        print(producto) #{'idProducto': 24, 'cantidad': 2}
+        cursor.execute("select precioUnitario, nombreProducto from producto where idProducto = %s", [producto["idProducto"],]) 
+        result = cursor.fetchone()  #result = {'precioUnitario': Decimal('16.00')}
+
+        if not result: 
+            raise ValueError(f"Producto {producto['idProducto']} no encontrado")
+        
+        #establece los montos de los productos
+        producto["nombreProducto"] = result['nombreProducto']
+        preciounit =  float(result['precioUnitario'])
+        producto["precioUnitario"] = preciounit
+        producto["precio"] = preciounit * producto["cantidad"]
+        subtotal += producto["precio"]
+
+        productosCalculados.append(producto)
+    
+    #modificado para que salgan los precios esperados 0.18 * PRECIO + PRECIO = PRECIO TOTAL
+    precioTotalProductos = subtotal / 1.18 
+    igv = precioTotalProductos * 0.18
+
+    return precioTotalProductos, igv, productosCalculados
+
+#primero crea la fila en factura introduciento los datos y esto regresa el idFacturacion para poder agregar los productos a detalleFactura
+def guardarCompra(iduser, session):
+    metadata = session["metadata"]
+    try:
+        conexion = conexion_pool.get_connection()
+        with conexion.cursor() as cursor:
+            #crea fila en factura
+            cursor.callproc('insertar_facturacion', [iduser, metadata["impVenta"], metadata["impDelivery"], metadata["impIGV"], metadata["impTotal"], metadata["tipoDocumento"], session["id"]])
+
+            for result in cursor.stored_results():
+                idFacturacion = result.fetchone()[0]
+
+            #agrega productos a detalleFactura con el idFacturacion obtenido
+            guardarProducto(idFacturacion, metadata["productos"], cursor)
+            
+            conexion.commit()
+            return cursor.fetchone()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        if conexion.is_connected():
+            conexion.close()
