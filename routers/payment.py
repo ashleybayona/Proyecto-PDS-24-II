@@ -148,6 +148,7 @@ async def stripe_webhook(request: Request):
     # Maneja el evento del pago
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
+        print(session)
 
         # Recupera datos del usuario desde metadata
         idUsuario = int(session["metadata"]["idUsuario"])

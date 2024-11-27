@@ -47,7 +47,7 @@ def calcularImportes(productos, cursor): #devuelve importeVenta, importeIGV / pr
 #primero crea la fila en factura introduciento los datos y esto regresa el idFacturacion para poder agregar los productos a detalleFactura
 def guardarCompra(iduser, session):
     metadata = session["metadata"]
-
+    conexion = None
     try:
         # ver si están todos los datos
         required_keys = ["impVenta", "impDelivery", "impIGV", "impTotal", "productos", "tipoDocumento"]
@@ -89,5 +89,5 @@ def guardarCompra(iduser, session):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error al guardar la compra: {str(e)}")
     finally:
-        if conexion.is_connected():
+        if conexion and conexion.is_connected():
             conexion.close()
