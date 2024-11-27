@@ -67,7 +67,7 @@ def create_checkout_session(data: dict): #idUsuario, productos(idProducto, canti
                     payment_method_types=["card"],
                     line_items=line_items,
                     mode="payment",
-                    success_url="https://z2rvnq4d-5173.brs.devtunnels.ms/", #CAMBIAR
+                    success_url="https://web.facebook.com/?_rdc=1&_rdr", #CAMBIAR
                     cancel_url="https://z2rvnq4d-5173.brs.devtunnels.ms/cancel", #CAMBIAR
                     metadata={ # metadata solo acepta strings
                         "idUsuario": str(iduser),

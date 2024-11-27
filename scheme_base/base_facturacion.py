@@ -62,10 +62,17 @@ def guardarCompra(iduser, session):
 
         # volver al tipo de dato original
         impVenta = float(metadata["impVenta"])
+        print(impVenta)
         impDelivery = float(metadata["impDelivery"])
+        print(impDelivery)
         impIGV = float(metadata["impIGV"])
+        print(impIGV)
         impTotal = float(metadata["impTotal"])
+        print(impTotal)
         productos = json.loads(metadata["productos"])
+        print(productos)
+
+        print("antes de conexion")
 
         conexion = conexion_pool.get_connection()
 
