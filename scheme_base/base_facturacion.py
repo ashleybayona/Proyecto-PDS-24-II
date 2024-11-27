@@ -61,13 +61,13 @@ def guardarCompra(iduser, session):
         print("despues de los required_keys")
 
         # volver al tipo de dato original
-        impVenta = float(metadata["impVenta"])
+        impVenta = round(float(metadata["impVenta"]), 2)
         print(impVenta)
-        impDelivery = float(metadata["impDelivery"])
+        impDelivery = round(float(metadata["impDelivery, 2"]), 2)
         print(impDelivery)
-        impIGV = float(metadata["impIGV"])
+        impIGV = round(float(metadata["impIGV"])), 2        
         print(impIGV)
-        impTotal = float(metadata["impTotal"])
+        impTotal = round(float(metadata["impTotal"]), 2)
         print(impTotal)
         productos = json.loads(metadata["productos"])
         print(productos)

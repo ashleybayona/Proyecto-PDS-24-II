@@ -152,9 +152,15 @@ async def stripe_webhook(request: Request):
 
         # Recupera datos del usuario desde metadata
         idUsuario = int(session["metadata"]["idUsuario"])
+        print("idUsuario", idUsuario)
 
         # Guarda la información en la base de datos
-        await guardarCompra(idUsuario, session) # dentro se deserialized metadata y se guarda en la base de datos
+        try:
+            await guardarCompra(idUsuario, session)
+        except HTTPException as e:
+            print(f"Error al guardar la compra: {str(e)}")
+        except Exception as e:
+            print(f"Error inesperado: {str(e)}")
 
     return {"status": "success"}
 
