@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 #ARCHIVOS
 from scheme.facturacion_scheme import *
+from config.connect_mysql import *
 
 payment_router = APIRouter()
 
@@ -24,48 +25,52 @@ el frontend pasa en formato json el idusuer, idproduct y la cantidad de los prod
 #este solo solicita el pago, si se completa recién guarda la info en la base de datos
 @payment_router.post("/create-checkout-session")
 def create_checkout_session(data: dict): #idUsuario, productos(idProducto, cantidad), impDelivery
-    iduser = data["idUsuario"]
-    productos = data["productos"]
-    impdelivery = data["delivery"]
-
-    #precioTotalProductos, igv, productosCalculados
-    subtotal, igv, productosCalculados = calcularImportes(productos)
-    total = subtotal + igv + impdelivery
-
-    line_items = [
-        {
-            "price_data": {
-                "currency": "pen",
-                "product_data": {"name": producto["nombreProducto"]},
-                "unit_amount": float(producto["precioUnitario"] * 100),
-            },
-            "quantity": producto["cantidad"],
-        }
-        for producto in productosCalculados
-    ]
-    print(line_items)
-
-    if impdelivery > 0:
-        line_items.append({
-            "price_data": {
-                "currency": "pen",
-                "product_data": {"name": "Costo de Delivery"},
-                "unit_amount": float(impdelivery * 100),
-            },
-            "quantity": 1,
-        })
-
     try:
-        #se crea la sesión en stripe
-        session = stripe.checkout.Session.create(
-            payment_method_types=["card"],
-            line_items=line_items,
-            mode="payment",
-            success_url="https://z2rvnq4d-5173.brs.devtunnels.ms/", #CAMBIAR
-            cancel_url="https://z2rvnq4d-5173.brs.devtunnels.ms/cancel", #CAMBIAR
-            metadata={"idUsuario": iduser},
-        )
-        return {"url": session.url}
+        conexion = conexion_pool.get_connection()
+        with conexion.cursor(dictionary=True) as cursor:
+            iduser = data["idUsuario"]
+            productos = data["productos"]
+            impdelivery = data["delivery"]
+
+            #precioTotalProductos, igv, productosCalculados
+            subtotal, igv, productosCalculados = calcularImportes(productos, cursor) #esto puede solo devolver el diccionario de productosCalculados y no lo demas, revisar
+            total = subtotal + igv + impdelivery
+
+            line_items = [
+                {
+                    "price_data": {
+                        "currency": "pen",
+                        "product_data": {"name": producto["nombreProducto"]},
+                        "unit_amount": int(producto["precioUnitario"] * 100),
+                    },
+                    "quantity": producto["cantidad"],
+                }
+                for producto in productosCalculados
+            ]
+
+            if impdelivery > 0:
+                line_items.append({
+                    "price_data": {
+                        "currency": "pen",
+                        "product_data": {"name": "Costo de Delivery"},
+                        "unit_amount": int(impdelivery * 100),
+                    },
+                    "quantity": 1,
+                })
+
+            try:
+                #se crea la sesión en stripe
+                session = stripe.checkout.Session.create(
+                    payment_method_types=["card"],
+                    line_items=line_items,
+                    mode="payment",
+                    success_url="https://z2rvnq4d-5173.brs.devtunnels.ms/", #CAMBIAR
+                    cancel_url="https://z2rvnq4d-5173.brs.devtunnels.ms/cancel", #CAMBIAR
+                    metadata={"idUsuario": iduser},
+                )
+                return {"url": session.url}
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=f"Error creando sesión de pago: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error creando sesión de pago: {str(e)}")
 
