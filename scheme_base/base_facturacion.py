@@ -58,6 +58,8 @@ def guardarCompra(iduser, session):
             if key not in metadata:
                 raise ValueError(f"Falta el campo requerido en metadata: {key}")
         
+        print("despues de los required_keys")
+
         # volver al tipo de dato original
         impVenta = float(metadata["impVenta"])
         impDelivery = float(metadata["impDelivery"])
@@ -69,8 +71,12 @@ def guardarCompra(iduser, session):
 
         with conexion.cursor() as cursor:
             print("entre al cursor")
+
             #crea fila en factura
             cursor.callproc('insertar_facturacion', [iduser, impVenta, impDelivery, impIGV, impTotal, metadata["tipoDocumento"], session["id"]])
+
+            print("despues de insertar_facturacion")
+            print(session["id"])
 
             # obtener el id para el detalle de factura
             for result in cursor.stored_results():
