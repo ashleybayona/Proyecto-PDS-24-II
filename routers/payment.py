@@ -33,7 +33,6 @@ def create_checkout_session(data: dict): #idUsuario, productos(idProducto, canti
             productos = data["productos"]
             impdelivery = data["delivery"]
             tipoDocumento = data["tipoDocumento"]
-            print(productos)
 
             #precioTotalProductos, igv, productosCalculados
             subtotal, igv, productosCalculados = calcularImportes(productos, cursor) #esto puede solo devolver el diccionario de productosCalculados y no lo demas, revisar
@@ -128,15 +127,12 @@ def create_checkout_session():
 
 @payment_router.post("/stripe-webhook")
 async def stripe_webhook(request: Request):
-    print("entra")
     payload = await request.body()
     sig_header = request.headers.get("Stripe-Signature")
-    print("2entraa")
 
     try:
         # Verifica que el evento provenga de Stripe
         event = Webhook.construct_event(payload, sig_header, webhook_key)
-        print(event)
 
     except ValueError as e:
         # Error en el payload
@@ -148,11 +144,9 @@ async def stripe_webhook(request: Request):
     # Maneja el evento del pago
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
-        print(session)
 
         # Recupera datos del usuario desde metadata
         idUsuario = int(session["metadata"]["idUsuario"])
-        print("idUsuario", idUsuario)
 
         # Guarda la información en la base de datos
         try:
@@ -164,124 +158,3 @@ async def stripe_webhook(request: Request):
 
     return {"status": "success"}
 
-''' print(event)
-{
-    "api_version": "2024-10-28.acacia",
-    "created": 1732670920,
-    "data": {
-        "object": {
-            "adaptive_pricing": {
-                "enabled": false
-            },
-            "after_expiration": null,
-            "allow_promotion_codes": null,
-            "amount_subtotal": 8700,
-            "amount_total": 8700, #MONTO TOTAL AKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-            "automatic_tax": {
-                "enabled": false,
-                "liability": null,
-                "status": null
-            },
-            "billing_address_collection": null,
-            "cancel_url": "https://z2rvnq4d-5173.brs.devtunnels.ms/cancel";,
-            "client_reference_id": null,
-            "client_secret": null,
-            "consent": null,
-            "consent_collection": null,
-            "created": 1732670879,
-            "currency": "pen",
-            "currency_conversion": null,
-            "custom_fields": [],
-            "custom_text": {
-                "after_submit": null,
-                "shipping_address": null,
-                "submit": null,
-                "terms_of_service_acceptance": null
-            },
-            "customer": null,
-            "customer_creation": "if_required",
-            "customer_details": {
-                "address": {
-                    "city": null,
-                    "country": "PE",
-                    "line1": null,
-                    "line2": null,
-                    "postal_code": null,
-                    "state": null
-                },
-                "email": "sm.lapuntita@gmail.com",
-                "name": "la puntita",
-                "phone": null,
-                "tax_exempt": "none",
-                "tax_ids": []
-            },
-            "customer_email": null,
-            "expires_at": 1732757279,
-            "id": "cs_test_b1d1bAro1bNPCgpv4XBmQwIsgeJZCUPuYaxWpyfNSLm640EeBbjMkQfVQT",
-            "invoice": null,
-            "invoice_creation": {
-                "enabled": false,
-                "invoice_data": {
-                    "account_tax_ids": null,
-                    "custom_fields": null,
-                    "description": null,
-                    "footer": null,
-                    "issuer": null,
-                    "metadata": {},
-                    "rendering_options": null
-                }
-            },
-            "livemode": false,
-            "locale": null,
-            "metadata": {
-                "idUsuario": "1"
-            },
-            "mode": "payment",
-            "object": "checkout.session",
-            "payment_intent": "pi_3QPa3W07GBSgIitx0Zf71b19",
-            "payment_link": null,
-            "payment_method_collection": "if_required",
-            "payment_method_configuration_details": null,
-            "payment_method_options": {
-                "card": {
-                    "request_three_d_secure": "automatic"
-                }
-            },
-            "payment_method_types": [
-                "card"
-            ],
-            "payment_status": "paid", #ESTADO DE PAGO AKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-            "phone_number_collection": {
-                "enabled": false
-            },
-            "recovered_from": null,
-            "saved_payment_method_options": null,
-            "setup_intent": null,
-            "shipping_address_collection": null,
-            "shipping_cost": null,
-            "shipping_details": null,
-            "shipping_options": [],
-            "status": "complete",
-            "submit_type": null,
-            "subscription": null,
-            "success_url": "https://z2rvnq4d-5173.brs.devtunnels.ms/";,
-            "total_details": {
-                "amount_discount": 0,
-                "amount_shipping": 0,
-                "amount_tax": 0
-            },
-            "ui_mode": "hosted",
-            "url": null
-        }
-    },
-    "id": "evt_1QPa3Y07GBSgIitxGGEz1Kbs",
-    "livemode": false,
-    "object": "event",
-    "pending_webhooks": 1,
-    "request": {
-        "id": null,
-        "idempotency_key": null
-    },
-    "type": "checkout.session.completed"
-}
-'''

@@ -22,7 +22,6 @@ def calcularImportes(productos, cursor): #devuelve importeVenta, importeIGV / pr
     productosCalculados = []
 
     for producto in productos:
-        print(producto) #{'idProducto': 24, 'cantidad': 2}
         cursor.execute("select precioUnitario, nombreProducto from producto where idProducto = %s", [producto["idProducto"],]) 
         result = cursor.fetchone()  #result = {'precioUnitario': Decimal('16.00')}
 
@@ -46,44 +45,27 @@ def calcularImportes(productos, cursor): #devuelve importeVenta, importeIGV / pr
 
 #primero crea la fila en factura introduciento los datos y esto regresa el idFacturacion para poder agregar los productos a detalleFactura
 def guardarCompra(iduser, session):
-    print("entra a guardarCompra")
     metadata = session["metadata"]
-    print("metadata", metadata)
     conexion = None
     try:
-        print("entra al try")
         # ver si están todos los datos
         required_keys = ["impVenta", "impDelivery", "impIGV", "impTotal", "productos", "tipoDocumento"]
         for key in required_keys:
             if key not in metadata:
                 raise ValueError(f"Falta el campo requerido en metadata: {key}")
-        
-        print("despues de los required_keys")
 
         # volver al tipo de dato original
         impVenta = round(float(metadata["impVenta"]), 2)
-        print(impVenta)
         impDelivery = round(float(metadata["impDelivery"]), 2)
-        print(impDelivery)
-        impIGV = round(float(metadata["impIGV"]), 2)      
-        print(impIGV)
+        impIGV = round(float(metadata["impIGV"]), 2)  
         impTotal = round(float(metadata["impTotal"]), 2)
-        print(impTotal)
         productos = json.loads(metadata["productos"])
-        print(productos)
-
-        print("antes de conexion")
 
         conexion = conexion_pool.get_connection()
 
         with conexion.cursor() as cursor:
-            print("entre al cursor")
-
             #crea fila en factura
             cursor.callproc('insertar_facturacion', [iduser, impVenta, impDelivery, impIGV, impTotal, metadata["tipoDocumento"], session["id"]])
-
-            print("despues de insertar_facturacion")
-            print(session["id"])
 
             # obtener el id para el detalle de factura
             for result in cursor.stored_results():
@@ -91,12 +73,9 @@ def guardarCompra(iduser, session):
 
             if not idFacturacion:
                 raise ValueError("No se pudo obtener el ID de la facturación.")
-
-            print("va a entrar a guardarProducto")
+            
             #agrega productos a detalleFactura con el idFacturacion obtenido
             guardarProducto(idFacturacion, productos, cursor)
-
-            print("sale de guardarProducto")
 
             conexion.commit()
             return {
