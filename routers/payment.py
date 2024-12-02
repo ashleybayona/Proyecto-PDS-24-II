@@ -83,6 +83,9 @@ def create_checkout_session(data: dict): #idUsuario, productos(idProducto, canti
                 raise HTTPException(status_code=400, detail=f"Error creando sesión de pago: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error creando sesión de pago: {str(e)}")
+    finally:
+        if conexion.is_connected():
+            conexion.close()
 
 
 '''#DE PRUEBA PARA VER Q RETORNA
