@@ -17,7 +17,7 @@ conexion_pool = mysql.connector.pooling.MySQLConnectionPool(
     port=DB_PORT,
     use_pure=True,
     pool_name='mypool',
-    pool_size=100
+    pool_size=32
 )
 
 try:
