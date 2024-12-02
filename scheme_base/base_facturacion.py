@@ -6,6 +6,7 @@ import json
 #ARCHIVOS
 from config.connect_mysql import *
 from scheme.det_facturacion_scheme import *
+from scheme.entrega_scheme import *
 
 class BaseFacturacion(BaseModel):
     idFacturacion: int
@@ -76,6 +77,10 @@ def guardarCompra(iduser, session):
             
             #agrega productos a detalleFactura con el idFacturacion obtenido
             guardarProducto(idFacturacion, productos, cursor)
+
+            if impDelivery > 0:
+                print("funcion: se crea la fila en entrega")
+                crearEntrega(idFacturacion, cursor)
 
             conexion.commit()
             return {

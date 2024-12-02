@@ -125,6 +125,7 @@ def create_checkout_session():
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error creando sesión de pago: {str(e)}")'''
 
+#entra cuando se completa el pago, si esta para delivery se debe de guardar en la tabla de entrega y debe de asignarse un repartidor de forma aleatoria con tal que esté disponible y luego ese reparitdor debe de cambiar su estado a ocupado
 @payment_router.post("/stripe-webhook")
 async def stripe_webhook(request: Request):
     payload = await request.body()
