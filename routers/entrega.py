@@ -1,5 +1,6 @@
 #LIBRERÍAS
 from fastapi import APIRouter, HTTPException
+from typing import List
 
 #ARCHIVOS
 from config.connect_mysql import *
@@ -8,7 +9,7 @@ from scheme.entrega_scheme import *
 entrega_router = APIRouter()
 
 #ver el estado de la entrega solo si sigue como "en proceso", para el seguimiento del pedido ESTO ES DENTRO DEL PERFIL USUARIO EN EL APARTADO SEGUIMIENTO DE PEDIDO
-@entrega_router.get("/mi-cuenta/seguimiento-pedidos", tags=["Usuario"], response_model=Entrega) 
+@entrega_router.get("/mi-cuenta/seguimiento-pedidos", tags=["Usuario"], response_model=List[Entrega]) 
 def seguimiento_pedidos(id: int):
     try:
         conexion = conexion_pool.get_connection()
@@ -24,7 +25,7 @@ def seguimiento_pedidos(id: int):
             conexion.close()
 
 #otro endpoint que se muestra despues de haber hecho la compra donde se muestra la informacion del pedido recién pagado
-@entrega_router.get("/checkout/entrega", tags=["Entrega"], response_model=Entrega)
+@entrega_router.get("/checkout/entrega", tags=["Entrega"], response_model=List[Entrega])
 def info_entrega(id: int):
     try:
         conexion = conexion_pool.get_connection()
