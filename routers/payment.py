@@ -21,6 +21,16 @@ webhook_key = os.getenv("WEBHOOK_KEY")
 
 '''FLUJO DE VENTA CON CARRITO DE COMPRA INCLUYENDO DELIVERY
 el frontend pasa en formato json el idusuer, idproduct y la cantidad de los productos, también el monto de delivery, en el backend se hace el cálculo de los precios y se envía a stripe para que genere el checkout session, el cual se envía al frontend para que redirija al usuario a la página de pago de stripe, una vez que el usuario paga, stripe envía una notificación al backend para que se actualice el estado de la orden, guardándose los datos recién en la base de datos y se envía un correo al usuario con la confirmación de la compra.
+
+{
+    "idUsuario": 9,
+    "productos":[
+        {"idProducto": 21, "cantidad": 1}, 
+        {"idProducto": 27, "cantidad": 1}
+    ],
+    "delivery": 0,
+    "tipoDocumento": "boleta"
+}
 '''
 
 #este solo solicita el pago, si se completa recién guarda la info en la base de datos

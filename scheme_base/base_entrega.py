@@ -21,3 +21,6 @@ def crearEntrega(idFacturacion, cursor):
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error al crear la entrega: {str(e)}")
+
+#PROGRAMACION DE ACTUALIZACION DE ENTREGA
+
