@@ -8,7 +8,7 @@ def actualizar_entregas():
         with conexion.cursor() as cursor:
             #revisa cuales entregas siguen en proceso y se fija si ya pasaron los 15min
             cursor.execute("""select idEntrega from entrega where estadoEntrega = 'en proceso'
-                            and timestampdiff(minute, concat(fechaEntrega, '', horaEstimada), now()) >= 15;""")
+                            and timestampdiff(minute, horaEstimada, now()) >= 0;""")
             entregas_pendientes = cursor.fetchall()
 
             for entrega in entregas_pendientes:
