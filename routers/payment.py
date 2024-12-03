@@ -108,7 +108,8 @@ def create_checkout_session(data: dict): #idUsuario, productos(idProducto, canti
     ],
     "delivery": 5,
     "tipoDocumento": "boleta"
-}'''
+}
+'''
 
 #entra cuando se completa el pago, si esta para delivery se debe de guardar en la tabla de entrega y debe de asignarse un repartidor de forma aleatoria con tal que esté disponible y luego ese reparitdor debe de cambiar su estado a ocupado
 @payment_router.post("/stripe-webhook")

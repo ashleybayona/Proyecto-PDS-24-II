@@ -13,15 +13,18 @@ from routers.billing import billing_router
 from routers.billing_detail import billing_detail_router
 from routers.login import login_router
 from routers.entrega_scheduler import actualizar_entregas
+from routers.entrega import entrega_router
 
 app = FastAPI()
 
+#RUTAS DE ENDPOINTS
 app.include_router(users_router) #usuarios
 app.include_router(products_router) #productos
 app.include_router(payment_router) #pagos
 app.include_router(billing_router) #facturación
 app.include_router(billing_detail_router) #detalle de facturación
 app.include_router(login_router) #login
+app.include_router(entrega_router) #entrega
 
 app.add_middleware(
     CORSMiddleware,
