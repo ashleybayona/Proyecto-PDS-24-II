@@ -34,7 +34,7 @@ el frontend pasa en formato json el idusuer, idproduct y la cantidad de los prod
 '''
 
 #este solo solicita el pago, si se completa recién guarda la info en la base de datos
-@payment_router.post("/create-checkout-session") #funciona
+@payment_router.post("/create-checkout-session", tags=["Pago"]) #funciona
 def create_checkout_session(data: dict): #idUsuario, productos(idProducto, cantidad), impDelivery, tipoDocumento
     try:
         conexion = conexion_pool.get_connection()
@@ -76,7 +76,7 @@ def create_checkout_session(data: dict): #idUsuario, productos(idProducto, canti
                     payment_method_types=["card"],
                     line_items=line_items,
                     mode="payment",
-                    success_url="https://web.facebook.com/?_rdc=1&_rdr", #CAMBIAR
+                    success_url="http://localhost:5173/perfil/seguimiento-pedidos", #CAMBIAR
                     cancel_url="https://z2rvnq4d-5173.brs.devtunnels.ms/cancel", #CAMBIAR
                     metadata={ # metadata solo acepta strings
                         "idUsuario": str(iduser),
@@ -112,7 +112,7 @@ def create_checkout_session(data: dict): #idUsuario, productos(idProducto, canti
 '''
 
 #entra cuando se completa el pago, si esta para delivery se debe de guardar en la tabla de entrega y debe de asignarse un repartidor de forma aleatoria con tal que esté disponible y luego ese reparitdor debe de cambiar su estado a ocupado
-@payment_router.post("/stripe-webhook")
+@payment_router.post("/stripe-webhook", tags=["Pago"])
 async def stripe_webhook(request: Request):
     payload = await request.body()
     sig_header = request.headers.get("Stripe-Signature")
@@ -145,3 +145,21 @@ async def stripe_webhook(request: Request):
 
     return {"status": "success"}
 
+#PARA Q EL FRONTEND TENGA LOS DATOS GAA
+@payment_router.get("/checkout/success", tags=["Pago"])
+def get_facturacion_info(stripe_session_id: str):
+    try:
+        conexion = conexion_pool.get_connection()
+        with conexion.cursor(dictionary=True) as cursor:
+            cursor.callproc('obtener_facturacion_por_session', [stripe_session_id])
+            factura_info = cursor.fetchone()
+            
+            if not factura_info:
+                raise HTTPException(status_code=404, detail="No se encontró información de facturación.")
+            
+            return factura_info
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener información: {str(e)}")
+    finally:
+        if conexion and conexion.is_connected():
+            conexion.close()
