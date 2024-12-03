@@ -18,7 +18,7 @@ conexion_pool = mysql.connector.pooling.MySQLConnectionPool(
     use_pure=True,
     pool_name='mypool',
     pool_size=32,
-    timezone='-05:00'
+    init_command="SET time_zone = '-05:00'"
 )
 
 try:
