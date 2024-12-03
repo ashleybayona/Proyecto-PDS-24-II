@@ -17,7 +17,7 @@ def seguimiento_pedidos(id: int):
             cursor.callproc('seguimiento_pedido_usuario', [id])
             for result in cursor.stored_results():
                 pedidos = result.fetchall() # guarda todos los que pedidos que no estan como entregados
-        return {"status": "success", "pedidos": pedidos}
+        return pedidos
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al obtener los pedidos: {str(e)}")
     finally:
@@ -25,7 +25,7 @@ def seguimiento_pedidos(id: int):
             conexion.close()
 
 #otro endpoint que se muestra despues de haber hecho la compra donde se muestra la informacion del pedido recién pagado
-@entrega_router.get("/checkout/entrega", tags=["Entrega"], response_model=List[Entrega])
+@entrega_router.get("/checkout/entrega", tags=["Entrega"], response_model=Entrega)
 def info_entrega(id: int):
     try:
         conexion = conexion_pool.get_connection()
@@ -38,7 +38,7 @@ def info_entrega(id: int):
             if not info_entrega:
                 raise HTTPException(status_code=404, detail="No se encontró información para la entrega.")
 
-        return {"status": "success", "entrega": info_entrega}
+        return info_entrega
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al obtener la entrega: {str(e)}")
     finally:
