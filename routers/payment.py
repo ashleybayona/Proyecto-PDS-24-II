@@ -98,45 +98,17 @@ def create_checkout_session(data: dict): #idUsuario, productos(idProducto, canti
             conexion.close()
 
 
-'''#DE PRUEBA PARA VER Q RETORNA
-@payment_router.post("/prueba-checkout-session")
-def create_checkout_session(): 
-    line_items = [
-        {
-            "price_data": {
-                "currency": "PEN",
-                "product_data": {
-                    "name": "T-shirt",
-                },
-                "unit_amount": 2000,
-            },
-            "quantity": 1,
-        },
-        {
-            "price_data": {
-                "currency": "PEN",
-                "product_data": {
-                    "name": "africano",
-                },
-                "unit_amount": 5000,
-            },
-            "quantity": 3,
-        },
-    ]
-
-    try:
-        #se crea la sesión en stripe
-        session = stripe.checkout.Session.create(
-            payment_method_types=["card"],
-            line_items=line_items,
-            mode="payment",
-            success_url="https://z2rvnq4d-5173.brs.devtunnels.ms/", #CAMBIAR
-            cancel_url="https://z2rvnq4d-5173.brs.devtunnels.ms/cancel", #CAMBIAR
-        )
-        print(session)
-        return {"url": session.url}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error creando sesión de pago: {str(e)}")'''
+'''#DE PRUEBA
+{
+    "idUsuario": 9,
+    "productos":[
+        {"idProducto": 3, "cantidad": 1}, 
+        {"idProducto": 10, "cantidad": 1},
+        {"idProducto": 36, "cantidad": 1}
+    ],
+    "delivery": 5,
+    "tipoDocumento": "boleta"
+}'''
 
 #entra cuando se completa el pago, si esta para delivery se debe de guardar en la tabla de entrega y debe de asignarse un repartidor de forma aleatoria con tal que esté disponible y luego ese reparitdor debe de cambiar su estado a ocupado
 @payment_router.post("/stripe-webhook")
