@@ -18,9 +18,12 @@ def asginarRepartidor(cursor):
 
     #elegir un repartidor aleatorio y retornarlo
     if repartidores:
-        idRepartidor = random.choice(repartidores)
+        idRepartidor = random.choice(repartidores)[0]
+        print(idRepartidor)
+
         #cambia la disponibilidad del repartidor a no disponible
         cursor.callproc('repartidor_no_disp', [idRepartidor])
+        print("despues d cambiar disp repart")
         return idRepartidor
     else:
         print("nai repartidores disponibles")
